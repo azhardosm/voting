@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelab Kebajikan BIPD</title>
+    
+    <!-- Memuatkan font Inter dari Google Fonts untuk teks yang kemas -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Memuatkan Tailwind CSS untuk penggayaan responsif -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Latar belakang kelabu gelap yang kemas menyerupai tema 'dark mode' yang elegan */
+            background-color: #111827; 
+            color: #f3f4f6;
+        }
+        
+        /* Kesan 'hover' dan animasi lembut untuk butang */
+        .link-button {
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+        .link-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+            background-color: #1e40af; /* Warna biru sedikit gelap apabila di-hover */
+        }
+        .link-button:active {
+            transform: translateY(1px);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-start pt-12 pb-8 px-4 sm:px-6 lg:px-8">
+    
+    <main class="w-full max-w-md mx-auto flex flex-col items-center">
+        
+        <!-- Gambar Logo -->
+        <div class="relative w-32 h-32 mb-4">
+            <!-- Bulatan latar belakang sekiranya gambar lutsinar atau gagal dimuat -->
+            <div class="absolute inset-0 bg-gray-800 rounded-full shadow-lg"></div>
+            <!-- Menggunakan imej baharu: LOGO-BIPD-BM.png untuk kegunaan Netlify -->
+            <img 
+                src="LOGO-BIPD-BM.png" 
+                alt="Logo Kelab Kebajikan BIPD" 
+                class="relative z-10 w-full h-full object-cover rounded-full border-4 border-gray-700 shadow-xl"
+                onerror="this.onerror=null; this.src='https://placehold.co/150x150/1f2937/f3f4f6?text=BIPD';"
+            >
+        </div>
+
+        <!-- Tajuk Halaman / Nama Kelab -->
+        <h1 class="text-2xl font-bold text-white mb-2 text-center tracking-tight">
+            Kelab Kebajikan BIPD
+        </h1>
+        
+        <!-- Penerangan ringkas (Pilihan) -->
+        <p class="text-gray-400 text-sm mb-8 text-center px-4">
+            Pautan rasmi untuk platform dan perkhidmatan Kelab Kebajikan BIPD.
+        </p>
+
+        <div class="w-full flex flex-col gap-4">
+            
+            <!-- Butang Pautan 1: e-Undi -->
+            <a 
+                href="https://script.google.com/macros/s/AKfycbzxRqery6U6B2c_zIQBpaYg_1dZOQxJLR_DACewDoQJxFYs-mtzlEmoU5voSGa2aXp2Bg/exec" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="link-button block w-full bg-blue-600 text-white font-medium text-center py-4 px-6 rounded-xl shadow-md border border-blue-500/30 flex items-center justify-center space-x-2"
+            >
+                <!-- Ikon (Pilihan - menggunakan SVG inline untuk kemasan) -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>e-Undi Kelab Kebajikan BIPD</span>
+            </a>
+            
+            <!-- Tempat untuk menambah butang lain pada masa hadapan -->
+            <!-- 
+            <a href="#" class="link-button block w-full bg-gray-800 text-white font-medium text-center py-4 px-6 rounded-xl shadow-md border border-gray-700 flex items-center justify-center space-x-2">
+                <span>Pautan Seterusnya...</span>
+            </a> 
+            -->
+
+        </div>
+    </main>
+
+    <footer class="mt-auto pt-12 w-full text-center">
+        <p class="text-xs text-gray-500">
+            &copy; <span id="currentYear"></span> Kelab Kebajikan BIPD. Hak Cipta Terpelihara.
+        </p>
+    </footer>
+
+    <script>
+        // Set tahun semasa secara automatik di footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
