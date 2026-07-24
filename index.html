@@ -12,6 +12,7 @@
     
     <!-- Memuatkan Tailwind CSS untuk penggayaan responsif -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
     
     <style>
         body {
@@ -44,6 +45,11 @@
         .countdown-unit {
             background: rgba(15, 23, 42, 0.74);
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        }
+
+        .nomination-chart {
+            height: 188px;
+            width: 100%;
         }
     </style>
 </head>
@@ -111,6 +117,13 @@
             <p id="countdownMessage" class="mt-4 rounded-lg bg-blue-500/10 border border-blue-300/10 px-3 py-2 text-xs text-blue-100 text-center">
                 Masa berbaki sebelum pencalonan ditutup
             </p>
+
+            <div class="mt-4 border-t border-white/10 pt-4">
+                <div id="nominationChart" class="nomination-chart" aria-label="Memuatkan statistik pencalonan"></div>
+                <p id="participationMessage" class="mt-3 text-center text-xs text-gray-400">
+                    Memuatkan statistik pencalonan...
+                </p>
+            </div>
         </section>
 
         <div class="w-full flex flex-col gap-4">
@@ -155,6 +168,11 @@
         const countdownMinutes = document.getElementById('countdownMinutes');
         const countdownSeconds = document.getElementById('countdownSeconds');
         const countdownMessage = document.getElementById('countdownMessage');
+        const sheetId = '1Dwpdnj7BY6uFCNR70CzQTLEHB0VHJul4SHwtkmXHqpg';
+        const sheetName = 'EmailLayak';
+        const nominationChartElement = document.getElementById('nominationChart');
+        const nominationChart = echarts.init(nominationChartElement);
+        const participationMessage = document.getElementById('participationMessage');
 
         function padTime(value) {
             return String(value).padStart(2, '0');
@@ -185,6 +203,134 @@
 
         updateNominationCountdown();
         setInterval(updateNominationCountdown, 1000);
+
+        function isFilledCell(cell) {
+            if (!cell || cell.v === null || cell.v === undefined) return false;
+            return String(cell.v).trim() !== '';
+        }
+
+        function getCellValue(row, index) {
+            return row && row.c && row.c[index] ? row.c[index].v : null;
+        }
+
+        function renderNominationChart(nominated, notNominated, total) {
+            const nominationPct = total ? (nominated / total) * 100 : 0;
+            const nominationPctText = nominationPct.toFixed(1);
+
+            nominationChartElement.setAttribute('aria-label', `${nominationPctText}% pencalonan selesai. ${nominated} sudah calon, ${notNominated} belum calon.`);
+            nominationChart.setOption({
+                backgroundColor: 'transparent',
+                color: ['#34d399', 'rgba(255, 255, 255, 0.14)'],
+                title: {
+                    text: `${nominationPctText}%`,
+                    subtext: 'Pencalonan',
+                    left: 'center',
+                    top: 'center',
+                    textStyle: {
+                        color: '#6ee7b7',
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: 31,
+                        fontWeight: 800,
+                        lineHeight: 38
+                    },
+                    subtextStyle: {
+                        color: '#9ca3af',
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: 11,
+                        fontWeight: 600
+                    },
+                    itemGap: 2
+                },
+                tooltip: {
+                    trigger: 'item',
+                    backgroundColor: '#020617',
+                    borderColor: 'rgba(255, 255, 255, 0.12)',
+                    borderWidth: 1,
+                    textStyle: {
+                        color: '#e5e7eb',
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: 12
+                    },
+                    formatter: params => {
+                        const percent = total ? ((params.value / total) * 100).toFixed(1) : '0.0';
+                        return `<strong>${params.name}</strong><br/>${params.value} ahli (${percent}%)`;
+                    }
+                },
+                series: [
+                    {
+                        type: 'pie',
+                        radius: ['62%', '84%'],
+                        center: ['50%', '50%'],
+                        avoidLabelOverlap: true,
+                        label: {
+                            show: false
+                        },
+                        labelLine: {
+                            show: false
+                        },
+                        emphasis: {
+                            scale: true,
+                            scaleSize: 4
+                        },
+                        data: [
+                            { name: 'Sudah calon', value: nominated },
+                            { name: 'Belum calon', value: notNominated }
+                        ]
+                    }
+                ]
+            });
+        }
+
+        function updateParticipationStats(response) {
+            try {
+                const rows = response.table.rows || [];
+                const eligibleRows = rows.filter(row => isFilledCell(row.c && row.c[0]));
+                const total = eligibleRows.length;
+                const nominated = eligibleRows.filter(row => getCellValue(row, 1) === true).length;
+                const notNominated = Math.max(total - nominated, 0);
+                const voteColumns = [
+                    { index: 2, label: 'Pengerusi' },
+                    { index: 3, label: 'Setiausaha' },
+                    { index: 4, label: 'Bendahari' },
+                    { index: 5, label: 'AJK' }
+                ];
+                const activeVote = voteColumns
+                    .map(role => ({
+                        label: role.label,
+                        count: eligibleRows.filter(row => isFilledCell(row.c && row.c[role.index])).length
+                    }))
+                    .find(role => role.count > 0);
+
+                renderNominationChart(nominated, notNominated, total);
+
+                if (activeVote) {
+                    const votePct = total ? ((activeVote.count / total) * 100).toFixed(1) : '0.0';
+                    participationMessage.textContent = `Undian ${activeVote.label}: ${activeVote.count}/${total} (${votePct}%) telah mengundi.`;
+                } else {
+                    participationMessage.textContent = `${nominated} daripada ${total} ahli layak telah membuat pencalonan.`;
+                }
+            } catch (error) {
+                nominationChartElement.setAttribute('aria-label', 'Statistik pencalonan belum dapat dimuatkan.');
+                participationMessage.textContent = 'Statistik belum dapat dimuatkan buat masa ini.';
+            }
+        }
+
+        function loadParticipationStats() {
+            const oldScript = document.getElementById('participationStatsScript');
+            if (oldScript) oldScript.remove();
+
+            const script = document.createElement('script');
+            script.id = 'participationStatsScript';
+            script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=responseHandler:updateParticipationStats&sheet=${encodeURIComponent(sheetName)}&cacheBust=${Date.now()}`;
+            script.onerror = () => {
+                participationMessage.textContent = 'Statistik belum dapat dimuatkan buat masa ini.';
+            };
+            document.body.appendChild(script);
+        }
+
+        loadParticipationStats();
+        setInterval(loadParticipationStats, 60000);
+        window.addEventListener('resize', () => nominationChart.resize());
     </script>
 </body>
 </html>
