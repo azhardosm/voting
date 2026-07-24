@@ -33,6 +33,18 @@
         .link-button:active {
             transform: translateY(1px);
         }
+
+        .countdown-card {
+            background:
+                radial-gradient(circle at top left, rgba(37, 99, 235, 0.28), transparent 34%),
+                linear-gradient(145deg, rgba(17, 24, 39, 0.96), rgba(31, 41, 55, 0.92));
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+
+        .countdown-unit {
+            background: rgba(15, 23, 42, 0.74);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-start pt-12 pb-8 px-4 sm:px-6 lg:px-8">
@@ -59,6 +71,47 @@
         <p class="text-gray-400 text-sm mb-8 text-center px-4">
             Pautan rasmi untuk platform dan perkhidmatan Kelab BIPD.
         </p>
+
+        <!-- Countdown Tutup Pencalonan -->
+        <section class="countdown-card w-full mb-6 border border-blue-400/20 rounded-2xl p-4 sm:p-5 shadow-lg overflow-hidden">
+            <div class="flex items-center justify-between gap-3 mb-4">
+                <div>
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-blue-200">
+                        Tutup Pencalonan
+                    </p>
+                    <p class="text-sm font-medium text-white mt-1">
+                        28 Julai 2026, 12:00 tengah hari
+                    </p>
+                </div>
+                <div class="h-10 w-10 shrink-0 rounded-full bg-blue-500/15 border border-blue-300/20 flex items-center justify-center text-blue-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+
+            <div id="nominationCountdown" class="grid grid-cols-4 gap-2 sm:gap-3 text-center" aria-live="polite">
+                <div class="countdown-unit rounded-xl py-3 px-2 border border-white/10">
+                    <span id="countdownDays" class="block text-2xl sm:text-3xl font-bold text-white leading-none">00</span>
+                    <span class="block mt-1 text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-gray-400">Hari</span>
+                </div>
+                <div class="countdown-unit rounded-xl py-3 px-2 border border-white/10">
+                    <span id="countdownHours" class="block text-2xl sm:text-3xl font-bold text-white leading-none">00</span>
+                    <span class="block mt-1 text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-gray-400">Jam</span>
+                </div>
+                <div class="countdown-unit rounded-xl py-3 px-2 border border-white/10">
+                    <span id="countdownMinutes" class="block text-2xl sm:text-3xl font-bold text-white leading-none">00</span>
+                    <span class="block mt-1 text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-gray-400">Minit</span>
+                </div>
+                <div class="countdown-unit rounded-xl py-3 px-2 border border-white/10">
+                    <span id="countdownSeconds" class="block text-2xl sm:text-3xl font-bold text-white leading-none">00</span>
+                    <span class="block mt-1 text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-gray-400">Saat</span>
+                </div>
+            </div>
+            <p id="countdownMessage" class="mt-4 rounded-lg bg-blue-500/10 border border-blue-300/10 px-3 py-2 text-xs text-blue-100 text-center">
+                Masa berbaki sebelum pencalonan ditutup
+            </p>
+        </section>
 
         <div class="w-full flex flex-col gap-4">
             
@@ -95,6 +148,43 @@
     <script>
         // Set tahun semasa secara automatik di footer
         document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        const nominationDeadline = new Date('2026-07-28T12:00:00+08:00').getTime();
+        const countdownDays = document.getElementById('countdownDays');
+        const countdownHours = document.getElementById('countdownHours');
+        const countdownMinutes = document.getElementById('countdownMinutes');
+        const countdownSeconds = document.getElementById('countdownSeconds');
+        const countdownMessage = document.getElementById('countdownMessage');
+
+        function padTime(value) {
+            return String(value).padStart(2, '0');
+        }
+
+        function updateNominationCountdown() {
+            const distance = nominationDeadline - Date.now();
+
+            if (distance <= 0) {
+                countdownDays.textContent = '00';
+                countdownHours.textContent = '00';
+                countdownMinutes.textContent = '00';
+                countdownSeconds.textContent = '00';
+                countdownMessage.textContent = 'Pencalonan telah ditutup.';
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((distance / (1000 * 60)) % 60);
+            const seconds = Math.floor((distance / 1000) % 60);
+
+            countdownDays.textContent = padTime(days);
+            countdownHours.textContent = padTime(hours);
+            countdownMinutes.textContent = padTime(minutes);
+            countdownSeconds.textContent = padTime(seconds);
+        }
+
+        updateNominationCountdown();
+        setInterval(updateNominationCountdown, 1000);
     </script>
 </body>
 </html>
