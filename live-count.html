@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Counting Undian Kelab BIPD</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(52, 211, 153, 0.16), transparent 32%),
+                radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.16), transparent 34%),
+                #111827;
+            color: #f3f4f6;
+        }
+
+        .panel {
+            background: rgba(17, 24, 39, 0.82);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        }
+
+        .role-card {
+            background: rgba(15, 23, 42, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .role-card.active {
+            border-color: rgba(52, 211, 153, 0.58);
+            box-shadow: 0 0 0 1px rgba(52, 211, 153, 0.16), 0 18px 35px rgba(16, 185, 129, 0.08);
+        }
+
+        .chart-box {
+            height: 190px;
+            width: 100%;
+        }
+
+        .nomination-meter {
+            height: 28px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nomination-meter-fill {
+            width: 0%;
+            min-width: 0;
+            transition: width 0.45s ease;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            box-shadow: 0 0 24px rgba(52, 211, 153, 0.24);
+        }
+
+        .result-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            margin-bottom: 8px;
+        }
+
+        .rank-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            background: #f1f5f9;
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 800;
+            flex: 0 0 auto;
+        }
+    </style>
+</head>
+<body class="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
+    <main class="mx-auto flex w-full max-w-6xl flex-col gap-5">
+        <header class="panel rounded-2xl px-4 py-4 sm:px-5">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex items-center gap-3">
+                    <img src="logo-kelab-bipd.png" alt="Logo Kelab BIPD" class="h-14 w-16 object-contain">
+                    <div>
+                        <h1 class="text-xl font-bold tracking-tight text-white sm:text-2xl">Live Counting Undian</h1>
+                        <p class="mt-1 text-sm text-gray-400">Kelab BIPD</p>
+                    </div>
+                </div>
+                <div class="rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3">
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-400">Fasa Semasa</p>
+                    <p id="phaseLabel" class="mt-1 text-base font-bold text-emerald-300">Memuatkan...</p>
+                </div>
+            </div>
+        </header>
+
+        <section class="panel rounded-2xl p-4 sm:p-5">
+            <div class="grid gap-3 sm:grid-cols-3">
+                <div class="rounded-xl border border-white/10 bg-slate-950/45 p-4">
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-400">Ahli Layak</p>
+                    <p id="totalEligible" class="mt-2 text-3xl font-black text-white">--</p>
+                </div>
+                <div class="rounded-xl border border-white/10 bg-slate-950/45 p-4">
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-400">Sudah Pencalonan</p>
+                    <p id="totalNominated" class="mt-2 text-3xl font-black text-white">--</p>
+                </div>
+                <div class="rounded-xl border border-white/10 bg-slate-950/45 p-4">
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-400">Kemaskini</p>
+                    <p id="lastUpdated" class="mt-2 text-base font-bold text-white">--</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel rounded-2xl p-4 sm:p-5">
+            <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-200">Live Count Pencalonan</p>
+                    <h2 class="mt-1 text-lg font-bold text-white">Status Penyertaan Pencalonan</h2>
+                </div>
+                <p id="nominationSummary" class="text-sm font-semibold text-gray-300">Memuatkan data...</p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-slate-950/45 p-4">
+                <div class="mb-3 flex items-end justify-between gap-3">
+                    <div>
+                        <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-gray-400">Peratus Selesai</p>
+                        <p id="nominationPercent" class="mt-1 text-4xl font-black text-emerald-300">--%</p>
+                    </div>
+                    <div class="text-right text-sm">
+                        <p id="nominationDone" class="font-bold text-white">-- sudah calon</p>
+                        <p id="nominationPending" class="mt-1 font-semibold text-gray-400">-- belum calon</p>
+                    </div>
+                </div>
+                <div class="nomination-meter" title="Memuatkan statistik pencalonan">
+                    <div id="nominationMeterFill" class="nomination-meter-fill h-full"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="roleGrid" class="grid gap-4 lg:grid-cols-2"></section>
+    </main>
+
+    <script>
+        const SHEET_ID = '1Dwpdnj7BY6uFCNR70CzQTLEHB0VHJul4SHwtkmXHqpg';
+        const EMAIL_SHEET = 'EmailLayak';
+        const SETTINGS_SHEET = 'Settings';
+
+        const phases = [
+            'nomination',
+            'pause_nomination',
+            'voting_pengerusi',
+            'pause_pengerusi',
+            'voting_setiausaha',
+            'pause_setiausaha',
+            'voting_bendahari',
+            'pause_bendahari',
+            'voting_ajk',
+            'pause_ajk',
+            'closed',
+            'published'
+        ];
+
+        const roles = [
+            { key: 'pengerusi', title: 'Pengerusi & Timbalan Pengerusi', shortTitle: 'Pengerusi', column: 2, activePhase: 'voting_pengerusi', unlockIndex: 3, color: '#3b82f6', icon: 'bi-trophy-fill', winners: ['PENGERUSI', 'TIMBALAN PENGERUSI'], top: 2 },
+            { key: 'setiausaha', title: 'Setiausaha & Penolong Setiausaha', shortTitle: 'Setiausaha', column: 3, activePhase: 'voting_setiausaha', unlockIndex: 5, color: '#22c55e', icon: 'bi-journal-text', winners: ['SETIAUSAHA', 'PENOLONG SETIAUSAHA'], top: 2 },
+            { key: 'bendahari', title: 'Bendahari & Penolong Bendahari', shortTitle: 'Bendahari', column: 4, activePhase: 'voting_bendahari', unlockIndex: 7, color: '#ec4899', icon: 'bi-safe-fill', winners: ['BENDAHARI', 'PENOLONG BENDAHARI'], top: 2 },
+            { key: 'ajk', title: 'Ahli Jawatankuasa', shortTitle: 'AJK', column: 5, activePhase: 'voting_ajk', unlockIndex: 9, color: '#eab308', icon: 'bi-people-fill', winners: [], top: 8 }
+        ];
+
+        const state = {
+            phase: 'nomination',
+            rows: [],
+            charts: {}
+        };
+
+        const roleGrid = document.getElementById('roleGrid');
+        const phaseLabel = document.getElementById('phaseLabel');
+        const totalEligible = document.getElementById('totalEligible');
+        const totalNominated = document.getElementById('totalNominated');
+        const lastUpdated = document.getElementById('lastUpdated');
+        const nominationSummary = document.getElementById('nominationSummary');
+        const nominationPercent = document.getElementById('nominationPercent');
+        const nominationDone = document.getElementById('nominationDone');
+        const nominationPending = document.getElementById('nominationPending');
+        const nominationMeterFill = document.getElementById('nominationMeterFill');
+
+        function isFilledCell(cell) {
+            if (!cell || cell.v === null || cell.v === undefined) return false;
+            return String(cell.v).trim() !== '';
+        }
+
+        function getCellValue(row, index) {
+            return row && row.c && row.c[index] ? row.c[index].v : null;
+        }
+
+        function formatPhase(phase) {
+            const labels = {
+                nomination: 'Pencalonan',
+                pause_nomination: 'Pencalonan Ditutup',
+                voting_pengerusi: 'Undian Pengerusi',
+                pause_pengerusi: 'Undian Pengerusi Ditutup',
+                voting_setiausaha: 'Undian Setiausaha',
+                pause_setiausaha: 'Undian Setiausaha Ditutup',
+                voting_bendahari: 'Undian Bendahari',
+                pause_bendahari: 'Undian Bendahari Ditutup',
+                voting_ajk: 'Undian AJK',
+                pause_ajk: 'Undian AJK Ditutup',
+                closed: 'Undian Ditutup',
+                published: 'Keputusan Diterbitkan'
+            };
+
+            return labels[phase] || phase || 'Tidak Diketahui';
+        }
+
+        function getPhaseIndex() {
+            const index = phases.indexOf(state.phase);
+            return index === -1 ? 0 : index;
+        }
+
+        function normalizeName(value) {
+            return String(value || '').trim();
+        }
+
+        function getRoleResults(role) {
+            const counts = new Map();
+
+            state.rows.forEach(row => {
+                const value = normalizeName(getCellValue(row, role.column));
+                if (!value) return;
+                counts.set(value, (counts.get(value) || 0) + 1);
+            });
+
+            return Array.from(counts, ([name, count]) => ({ name, count }))
+                .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+        }
+
+        function getVoteCount(role) {
+            return state.rows.filter(row => isFilledCell(row.c && row.c[role.column])).length;
+        }
+
+        function isRoleClosed(role) {
+            return getPhaseIndex() >= role.unlockIndex;
+        }
+
+        function renderShell() {
+            roleGrid.innerHTML = roles.map(role => `
+                <article id="card-${role.key}" class="role-card rounded-2xl p-4 sm:p-5">
+                    <div class="mb-4 flex items-start justify-between gap-3">
+                        <div>
+                            <p id="badge-${role.key}" class="inline-flex rounded-full border border-white/10 bg-slate-950/55 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-gray-300">Menunggu</p>
+                            <h2 class="mt-3 text-lg font-bold text-white">${role.title}</h2>
+                            <p id="summary-${role.key}" class="mt-1 text-sm text-gray-400">Memuatkan data...</p>
+                        </div>
+                        <div class="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-slate-950/55" style="color:${role.color}">
+                            <i class="bi ${role.icon} text-xl"></i>
+                        </div>
+                    </div>
+                    <div id="chart-${role.key}" class="chart-box"></div>
+                    <button id="button-${role.key}" type="button" class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-700 px-4 py-3 text-sm font-bold text-white transition hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-45">
+                        <i class="bi bi-award-fill"></i>
+                        <span>Keputusan</span>
+                    </button>
+                </article>
+            `).join('');
+
+            roles.forEach(role => {
+                state.charts[role.key] = echarts.init(document.getElementById(`chart-${role.key}`));
+                document.getElementById(`button-${role.key}`).addEventListener('click', () => showResultPopup(role));
+            });
+        }
+
+        function renderDashboard() {
+            const total = state.rows.length;
+            const nominated = state.rows.filter(row => getCellValue(row, 1) === true).length;
+            const notNominated = Math.max(total - nominated, 0);
+            const nominationPercentValue = total ? ((nominated / total) * 100).toFixed(1) : '0.0';
+
+            phaseLabel.textContent = formatPhase(state.phase);
+            totalEligible.textContent = total;
+            totalNominated.textContent = nominated;
+            lastUpdated.textContent = new Date().toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            nominationSummary.textContent = `${nominated} sudah calon | ${notNominated} belum calon (${nominationPercentValue}%)`;
+            renderNominationMeter(nominated, notNominated, nominationPercentValue);
+
+            roles.forEach(role => {
+                const card = document.getElementById(`card-${role.key}`);
+                const badge = document.getElementById(`badge-${role.key}`);
+                const summary = document.getElementById(`summary-${role.key}`);
+                const button = document.getElementById(`button-${role.key}`);
+                const voted = getVoteCount(role);
+                const notVoted = Math.max(total - voted, 0);
+                const percent = total ? ((voted / total) * 100).toFixed(1) : '0.0';
+                const active = state.phase === role.activePhase;
+                const closed = isRoleClosed(role);
+
+                card.classList.toggle('active', active);
+                badge.textContent = active ? 'Live' : closed ? 'Ditutup' : 'Belum Dibuka';
+                badge.className = `inline-flex rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] ${active ? 'border-emerald-300/30 bg-emerald-500/15 text-emerald-200' : closed ? 'border-blue-300/20 bg-blue-500/10 text-blue-200' : 'border-white/10 bg-slate-950/55 text-gray-300'}`;
+                summary.textContent = `${voted}/${total} telah mengundi (${percent}%)`;
+                button.disabled = !closed;
+                button.className = `mt-4 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-white transition disabled:cursor-not-allowed disabled:opacity-45 ${closed ? 'bg-blue-600 hover:bg-blue-500' : 'bg-slate-700 hover:bg-slate-600'}`;
+
+                renderRoleChart(role, voted, notVoted, percent);
+            });
+        }
+
+        function renderNominationMeter(nominated, notNominated, percent) {
+            nominationPercent.textContent = `${percent}%`;
+            nominationDone.textContent = `${nominated} sudah calon`;
+            nominationPending.textContent = `${notNominated} belum calon`;
+            nominationMeterFill.style.width = `${percent}%`;
+            nominationMeterFill.parentElement.title = `Sudah calon: ${nominated} | Belum calon: ${notNominated}`;
+        }
+
+        function renderRoleChart(role, voted, notVoted, percent) {
+            state.charts[role.key].setOption({
+                backgroundColor: 'transparent',
+                color: [role.color, 'rgba(255, 255, 255, 0.14)'],
+                title: {
+                    text: `${percent}%`,
+                    subtext: 'Sudah Mengundi',
+                    left: 'center',
+                    top: 'center',
+                    textStyle: {
+                        color: role.color,
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: 30,
+                        fontWeight: 900
+                    },
+                    subtextStyle: {
+                        color: '#9ca3af',
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: 11,
+                        fontWeight: 700
+                    },
+                    itemGap: 2
+                },
+                tooltip: {
+                    trigger: 'item',
+                    backgroundColor: '#020617',
+                    borderColor: 'rgba(255, 255, 255, 0.12)',
+                    borderWidth: 1,
+                    textStyle: { color: '#e5e7eb', fontFamily: 'Inter, sans-serif', fontSize: 12 },
+                    formatter: params => {
+                        return `<strong>${params.name}</strong><br/>${params.value} ahli (${params.percent.toFixed(1)}%)`;
+                    }
+                },
+                series: [
+                    {
+                        type: 'pie',
+                        radius: ['58%', '80%'],
+                        center: ['50%', '50%'],
+                        label: { show: false },
+                        labelLine: { show: false },
+                        emphasis: { scale: true, scaleSize: 4 },
+                        data: [
+                            { name: 'Sudah mengundi', value: voted },
+                            { name: 'Belum mengundi', value: notVoted }
+                        ]
+                    }
+                ]
+            });
+        }
+
+        function showResultPopup(role) {
+            const results = getRoleResults(role);
+            const topResults = results.slice(0, role.top);
+            const emptyText = '<div style="padding:14px;border-radius:10px;background:#f8fafc;color:#64748b;text-align:center;border:1px solid #e2e8f0;">Tiada rekod undian setakat ini.</div>';
+            let html = '<div style="text-align:left;">';
+
+            if (!topResults.length) {
+                html += emptyText;
+            } else if (role.key === 'ajk') {
+                html += '<p style="margin:0 0 14px;color:#64748b;font-size:13px;font-weight:700;text-align:center;">8 AJK TERTINGGI</p>';
+                topResults.forEach((item, index) => {
+                    html += buildResultRow(index + 1, item.name, `${item.count} undi`);
+                });
+            } else {
+                topResults.forEach((item, index) => {
+                    html += buildWinnerBox(role.winners[index] || `KEDUDUKAN ${index + 1}`, item.name, item.count, index === 0 ? role.color : '#64748b');
+                });
+            }
+
+            html += '</div>';
+
+            Swal.fire({
+                title: role.title,
+                html,
+                width: role.key === 'ajk' ? '560px' : '500px',
+                confirmButtonText: 'Tutup Paparan',
+                confirmButtonColor: '#0f172a',
+                backdrop: 'rgba(15, 23, 42, 0.85)'
+            });
+        }
+
+        function buildWinnerBox(label, name, count, color) {
+            return `
+                <div style="position:relative;overflow:hidden;margin-bottom:12px;padding:18px;border-radius:16px;background:#ffffff;border:1px solid #e2e8f0;">
+                    <i class="bi bi-award-fill" style="position:absolute;right:-8px;top:-14px;font-size:72px;color:${color};opacity:0.11;"></i>
+                    <p style="margin:0 0 5px;color:${color};font-size:12px;font-weight:900;letter-spacing:0.08em;">${label}</p>
+                    <p style="margin:0;color:#1e293b;font-size:21px;font-weight:900;">${escapeHtml(name)} <span style="font-size:14px;color:#64748b;font-weight:700;">(${count} undi)</span></p>
+                </div>
+            `;
+        }
+
+        function buildResultRow(rank, name, votes) {
+            return `
+                <div class="result-row">
+                    <span style="display:flex;align-items:center;gap:10px;font-weight:800;">
+                        <span class="rank-pill">${rank}</span>
+                        ${escapeHtml(name)}
+                    </span>
+                    <span style="border-radius:999px;background:#fefce8;color:#a16207;padding:4px 10px;font-size:12px;font-weight:900;">${votes}</span>
+                </div>
+            `;
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function updateSystemPhase(response) {
+            const rows = response.table.rows || [];
+            const phaseRow = rows.find(row => getCellValue(row, 0) === 'Fasa Sistem');
+            state.phase = phaseRow ? getCellValue(phaseRow, 1) || 'nomination' : 'nomination';
+            renderDashboard();
+        }
+
+        function updateVotingData(response) {
+            const rows = response.table.rows || [];
+            state.rows = rows.filter(row => isFilledCell(row.c && row.c[0]));
+            renderDashboard();
+        }
+
+        function loadSheetData(scriptId, sheet, callbackName) {
+            const oldScript = document.getElementById(scriptId);
+            if (oldScript) oldScript.remove();
+
+            const script = document.createElement('script');
+            script.id = scriptId;
+            script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:${callbackName}&sheet=${encodeURIComponent(sheet)}&cacheBust=${Date.now()}`;
+            script.onerror = () => {
+                phaseLabel.textContent = 'Gagal memuatkan data';
+            };
+            document.body.appendChild(script);
+        }
+
+        function refreshData() {
+            loadSheetData('phaseScript', SETTINGS_SHEET, 'updateSystemPhase');
+            loadSheetData('voteScript', EMAIL_SHEET, 'updateVotingData');
+        }
+
+        renderShell();
+        refreshData();
+        setInterval(refreshData, 15000);
+        window.addEventListener('resize', () => {
+            Object.values(state.charts).forEach(chart => chart.resize());
+        });
+    </script>
+</body>
+</html>
