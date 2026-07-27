@@ -60,6 +60,12 @@
             box-shadow: 0 0 24px rgba(52, 211, 153, 0.24);
         }
 
+        .countdown-unit {
+            background: rgba(15, 23, 42, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
         .result-row {
             display: flex;
             align-items: center;
@@ -119,6 +125,34 @@
                 <div class="rounded-xl border border-white/10 bg-slate-950/45 p-4">
                     <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-400">Kemaskini</p>
                     <p id="lastUpdated" class="mt-2 text-base font-bold text-white">--</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel rounded-2xl p-4 sm:p-5">
+            <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-blue-200">Tutup Pencalonan</p>
+                    <h2 class="mt-1 text-lg font-bold text-white">28 Julai 2026, 12:00 tengah hari</h2>
+                </div>
+                <p id="nominationCountdownMessage" class="text-sm font-semibold text-blue-100">Masa berbaki sebelum pencalonan ditutup</p>
+            </div>
+            <div class="grid grid-cols-4 gap-2 text-center sm:gap-3" aria-live="polite">
+                <div class="countdown-unit rounded-xl px-2 py-3">
+                    <span id="countdownDays" class="block text-2xl font-black leading-none text-white sm:text-3xl">00</span>
+                    <span class="mt-1 block text-[10px] font-semibold uppercase tracking-wide text-gray-400">Hari</span>
+                </div>
+                <div class="countdown-unit rounded-xl px-2 py-3">
+                    <span id="countdownHours" class="block text-2xl font-black leading-none text-white sm:text-3xl">00</span>
+                    <span class="mt-1 block text-[10px] font-semibold uppercase tracking-wide text-gray-400">Jam</span>
+                </div>
+                <div class="countdown-unit rounded-xl px-2 py-3">
+                    <span id="countdownMinutes" class="block text-2xl font-black leading-none text-white sm:text-3xl">00</span>
+                    <span class="mt-1 block text-[10px] font-semibold uppercase tracking-wide text-gray-400">Minit</span>
+                </div>
+                <div class="countdown-unit rounded-xl px-2 py-3">
+                    <span id="countdownSeconds" class="block text-2xl font-black leading-none text-white sm:text-3xl">00</span>
+                    <span class="mt-1 block text-[10px] font-semibold uppercase tracking-wide text-gray-400">Saat</span>
                 </div>
             </div>
         </section>
@@ -194,10 +228,44 @@
         const nominationDone = document.getElementById('nominationDone');
         const nominationPending = document.getElementById('nominationPending');
         const nominationMeterFill = document.getElementById('nominationMeterFill');
+        const nominationDeadline = new Date('2026-07-28T12:00:00+08:00').getTime();
+        const countdownDays = document.getElementById('countdownDays');
+        const countdownHours = document.getElementById('countdownHours');
+        const countdownMinutes = document.getElementById('countdownMinutes');
+        const countdownSeconds = document.getElementById('countdownSeconds');
+        const nominationCountdownMessage = document.getElementById('nominationCountdownMessage');
 
         function isFilledCell(cell) {
             if (!cell || cell.v === null || cell.v === undefined) return false;
             return String(cell.v).trim() !== '';
+        }
+
+        function padTime(value) {
+            return String(value).padStart(2, '0');
+        }
+
+        function updateNominationCountdown() {
+            const distance = nominationDeadline - Date.now();
+
+            if (distance <= 0) {
+                countdownDays.textContent = '00';
+                countdownHours.textContent = '00';
+                countdownMinutes.textContent = '00';
+                countdownSeconds.textContent = '00';
+                nominationCountdownMessage.textContent = 'Pencalonan telah ditutup.';
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((distance / (1000 * 60)) % 60);
+            const seconds = Math.floor((distance / 1000) % 60);
+
+            countdownDays.textContent = padTime(days);
+            countdownHours.textContent = padTime(hours);
+            countdownMinutes.textContent = padTime(minutes);
+            countdownSeconds.textContent = padTime(seconds);
+            nominationCountdownMessage.textContent = 'Masa berbaki sebelum pencalonan ditutup';
         }
 
         function getCellValue(row, index) {
@@ -467,7 +535,9 @@
         }
 
         renderShell();
+        updateNominationCountdown();
         refreshData();
+        setInterval(updateNominationCountdown, 1000);
         setInterval(refreshData, 15000);
         window.addEventListener('resize', () => {
             Object.values(state.charts).forEach(chart => chart.resize());
