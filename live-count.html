@@ -137,7 +137,7 @@
                 </div>
                 <p id="nominationCountdownMessage" class="text-sm font-semibold text-blue-100">Masa berbaki sebelum pencalonan ditutup</p>
             </div>
-            <div class="grid grid-cols-4 gap-2 text-center sm:gap-3" aria-live="polite">
+            <div id="nominationCountdownGrid" class="grid grid-cols-4 gap-2 text-center sm:gap-3" aria-live="polite">
                 <div class="countdown-unit rounded-xl px-2 py-3">
                     <span id="countdownDays" class="block text-2xl font-black leading-none text-white sm:text-3xl">00</span>
                     <span class="mt-1 block text-[10px] font-semibold uppercase tracking-wide text-gray-400">Hari</span>
@@ -154,6 +154,11 @@
                     <span id="countdownSeconds" class="block text-2xl font-black leading-none text-white sm:text-3xl">00</span>
                     <span class="mt-1 block text-[10px] font-semibold uppercase tracking-wide text-gray-400">Saat</span>
                 </div>
+            </div>
+            <div id="nominationClosedMessage" class="hidden rounded-xl border border-emerald-300/20 bg-emerald-500/10 px-4 py-5 text-center">
+                <p class="text-base font-bold leading-relaxed text-emerald-100">
+                    Terima kasih atas penyertaan anda dalam sesi pencalonan. Undian akan dibuka semasa Mesyuarat Agung Kelab BIPD.
+                </p>
             </div>
         </section>
 
@@ -234,6 +239,8 @@
         const countdownMinutes = document.getElementById('countdownMinutes');
         const countdownSeconds = document.getElementById('countdownSeconds');
         const nominationCountdownMessage = document.getElementById('nominationCountdownMessage');
+        const nominationCountdownGrid = document.getElementById('nominationCountdownGrid');
+        const nominationClosedMessage = document.getElementById('nominationClosedMessage');
 
         function isFilledCell(cell) {
             if (!cell || cell.v === null || cell.v === undefined) return false;
@@ -253,6 +260,8 @@
                 countdownMinutes.textContent = '00';
                 countdownSeconds.textContent = '00';
                 nominationCountdownMessage.textContent = 'Pencalonan telah ditutup.';
+                nominationCountdownGrid.classList.add('hidden');
+                nominationClosedMessage.classList.remove('hidden');
                 return;
             }
 
@@ -266,6 +275,8 @@
             countdownMinutes.textContent = padTime(minutes);
             countdownSeconds.textContent = padTime(seconds);
             nominationCountdownMessage.textContent = 'Masa berbaki sebelum pencalonan ditutup';
+            nominationCountdownGrid.classList.remove('hidden');
+            nominationClosedMessage.classList.add('hidden');
         }
 
         function getCellValue(row, index) {
