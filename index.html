@@ -22,29 +22,12 @@
             color: #f3f4f6;
         }
         
-        /* Kesan 'hover' dan animasi lembut untuk butang */
-        .link-button {
-            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-        }
-        .link-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-            background-color: #1e40af; /* Warna biru sedikit gelap apabila di-hover */
-        }
-        .link-button:active {
-            transform: translateY(1px);
-        }
-
-        .countdown-card {
+        /* Penggayaan untuk kad mesej baharu */
+        .message-card {
             background:
-                radial-gradient(circle at top left, rgba(37, 99, 235, 0.28), transparent 34%),
+                radial-gradient(circle at top, rgba(16, 185, 129, 0.15), transparent 50%),
                 linear-gradient(145deg, rgba(17, 24, 39, 0.96), rgba(31, 41, 55, 0.92));
             box-shadow: 0 18px 45px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-        }
-
-        .countdown-unit {
-            background: rgba(15, 23, 42, 0.74);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
         }
 
         .nomination-chart {
@@ -73,52 +56,30 @@
             Kelab BIPD
         </h1>
         
-        <!-- Penerangan ringkas (Pilihan) -->
+        <!-- Penerangan ringkas -->
         <p class="text-gray-400 text-sm mb-8 text-center px-4">
-            Pautan rasmi untuk platform dan perkhidmatan Kelab BIPD.
+            Platform rasmi untuk ahli Kelab BIPD.
         </p>
 
-        <!-- Countdown Tutup Pencalonan -->
-        <section class="countdown-card w-full mb-6 border border-blue-400/20 rounded-2xl p-4 sm:p-5 shadow-lg overflow-hidden">
-            <div class="flex items-center justify-between gap-3 mb-4">
-                <div>
-                    <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-blue-200">
-                        Tutup Pencalonan
-                    </p>
-                    <p class="text-sm font-medium text-white mt-1">
-                        28 Julai 2026, 12:00 tengah hari
-                    </p>
-                </div>
-                <div class="h-10 w-10 shrink-0 rounded-full bg-blue-500/15 border border-blue-300/20 flex items-center justify-center text-blue-100">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
+        <section class="message-card w-full mb-6 border border-emerald-500/20 rounded-2xl p-6 sm:p-8 shadow-lg overflow-hidden relative text-center">
+            
+            <!-- Ikon Status (Tanda Seru / Makluman) -->
+            <div class="mx-auto w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-5 border border-emerald-500/20 shadow-inner">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
             </div>
 
-            <div id="nominationCountdown" class="grid grid-cols-4 gap-2 sm:gap-3 text-center" aria-live="polite">
-                <div class="countdown-unit rounded-xl py-3 px-2 border border-white/10">
-                    <span id="countdownDays" class="block text-2xl sm:text-3xl font-bold text-white leading-none">00</span>
-                    <span class="block mt-1 text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-gray-400">Hari</span>
-                </div>
-                <div class="countdown-unit rounded-xl py-3 px-2 border border-white/10">
-                    <span id="countdownHours" class="block text-2xl sm:text-3xl font-bold text-white leading-none">00</span>
-                    <span class="block mt-1 text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-gray-400">Jam</span>
-                </div>
-                <div class="countdown-unit rounded-xl py-3 px-2 border border-white/10">
-                    <span id="countdownMinutes" class="block text-2xl sm:text-3xl font-bold text-white leading-none">00</span>
-                    <span class="block mt-1 text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-gray-400">Minit</span>
-                </div>
-                <div class="countdown-unit rounded-xl py-3 px-2 border border-white/10">
-                    <span id="countdownSeconds" class="block text-2xl sm:text-3xl font-bold text-white leading-none">00</span>
-                    <span class="block mt-1 text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-gray-400">Saat</span>
-                </div>
-            </div>
-            <p id="countdownMessage" class="mt-4 rounded-lg bg-blue-500/10 border border-blue-300/10 px-3 py-2 text-xs text-blue-100 text-center">
-                Masa berbaki sebelum pencalonan ditutup
+            <!-- Mesej Utama yang telah dikemaskan -->
+            <h2 class="text-xl font-bold text-white mb-3 tracking-wide">Terima Kasih!</h2>
+            <p class="text-sm text-gray-300 leading-relaxed px-2">
+                Terima kasih atas pencalonan anda.<br>Sesi undian akan dibuka secara rasmi semasa <strong>Mesyuarat Agung</strong> berlangsung.
             </p>
 
-            <div class="mt-4 border-t border-white/10 pt-4">
+            <div class="mt-8 border-t border-white/10 pt-6">
+                <h3 class="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-200/70 mb-4">
+                    Status Pencalonan Semasa
+                </h3>
                 <div id="nominationChart" class="nomination-chart" aria-label="Memuatkan statistik pencalonan"></div>
                 <p id="participationMessage" class="mt-3 text-center text-xs text-gray-400">
                     Memuatkan statistik pencalonan...
@@ -126,30 +87,6 @@
             </div>
         </section>
 
-        <div class="w-full flex flex-col gap-4">
-            
-            <!-- Butang Pautan 1: e-Undi -->
-            <a 
-                href="https://script.google.com/macros/s/AKfycbwwFrV7kab5LRfk_WR6mQVyBjnNMOqnp4t_kkEnqCiIENNx3L3XfqLKiWdsU20g0nnrAA/exec" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                class="link-button block w-full bg-blue-600 text-white font-medium text-center py-4 px-6 rounded-xl shadow-md border border-blue-500/30 flex items-center justify-center space-x-2"
-            >
-                <!-- Ikon (Pilihan - menggunakan SVG inline untuk kemasan) -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>e-Undi Kelab BIPD</span>
-            </a>
-            
-            <!-- Tempat untuk menambah butang lain pada masa hadapan -->
-            <!-- 
-            <a href="#" class="link-button block w-full bg-gray-800 text-white font-medium text-center py-4 px-6 rounded-xl shadow-md border border-gray-700 flex items-center justify-center space-x-2">
-                <span>Pautan Seterusnya...</span>
-            </a> 
-            -->
-
-        </div>
     </main>
 
     <footer class="mt-auto pt-12 w-full text-center">
@@ -162,53 +99,23 @@
         // Set tahun semasa secara automatik di footer
         document.getElementById('currentYear').textContent = new Date().getFullYear();
 
-        const nominationDeadline = new Date('2026-07-28T12:00:00+08:00').getTime();
-        const countdownDays = document.getElementById('countdownDays');
-        const countdownHours = document.getElementById('countdownHours');
-        const countdownMinutes = document.getElementById('countdownMinutes');
-        const countdownSeconds = document.getElementById('countdownSeconds');
-        const countdownMessage = document.getElementById('countdownMessage');
+        // Pembolehubah untuk sistem Google Sheets dan carta
         const sheetId = '1Dwpdnj7BY6uFCNR70CzQTLEHB0VHJul4SHwtkmXHqpg';
         const sheetName = 'EmailLayak';
+        const settingsSheetName = 'Settings';
         const nominationChartElement = document.getElementById('nominationChart');
         const nominationChart = echarts.init(nominationChartElement);
         const participationMessage = document.getElementById('participationMessage');
+        let currentSystemPhase = 'nomination';
+        let latestParticipationResponse = null;
 
-        function padTime(value) {
-            return String(value).padStart(2, '0');
-        }
-
-        function updateNominationCountdown() {
-            const distance = nominationDeadline - Date.now();
-
-            if (distance <= 0) {
-                countdownDays.textContent = '00';
-                countdownHours.textContent = '00';
-                countdownMinutes.textContent = '00';
-                countdownSeconds.textContent = '00';
-                countdownMessage.textContent = 'Pencalonan telah ditutup.';
-                return;
-            }
-
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
-            const minutes = Math.floor((distance / (1000 * 60)) % 60);
-            const seconds = Math.floor((distance / 1000) % 60);
-
-            countdownDays.textContent = padTime(days);
-            countdownHours.textContent = padTime(hours);
-            countdownMinutes.textContent = padTime(minutes);
-            countdownSeconds.textContent = padTime(seconds);
-        }
-
-        updateNominationCountdown();
-        setInterval(updateNominationCountdown, 1000);
-
+        // Semak sekiranya sel mempunyai nilai
         function isFilledCell(cell) {
             if (!cell || cell.v === null || cell.v === undefined) return false;
             return String(cell.v).trim() !== '';
         }
 
+        // Dapatkan nilai sel
         function getCellValue(row, index) {
             return row && row.c && row.c[index] ? row.c[index].v : null;
         }
@@ -220,14 +127,14 @@
             nominationChartElement.setAttribute('aria-label', `${nominationPctText}% pencalonan selesai. ${nominated} sudah calon, ${notNominated} belum calon.`);
             nominationChart.setOption({
                 backgroundColor: 'transparent',
-                color: ['#34d399', 'rgba(255, 255, 255, 0.14)'],
+                color: ['#10b981', 'rgba(255, 255, 255, 0.08)'], // Warna hijau emerald
                 title: {
                     text: `${nominationPctText}%`,
                     subtext: 'Pencalonan',
                     left: 'center',
                     top: 'center',
                     textStyle: {
-                        color: '#6ee7b7',
+                        color: '#34d399',
                         fontFamily: 'Inter, sans-serif',
                         fontSize: 31,
                         fontWeight: 800,
@@ -262,12 +169,8 @@
                         radius: ['62%', '84%'],
                         center: ['50%', '50%'],
                         avoidLabelOverlap: true,
-                        label: {
-                            show: false
-                        },
-                        labelLine: {
-                            show: false
-                        },
+                        label: { show: false },
+                        labelLine: { show: false },
                         emphasis: {
                             scale: true,
                             scaleSize: 4
@@ -281,31 +184,42 @@
             });
         }
 
+        function getActiveVoteRole(phase) {
+            const roleByPhase = {
+                voting_pengerusi: { index: 2, label: 'Pengerusi' },
+                voting_setiausaha: { index: 3, label: 'Setiausaha' },
+                voting_bendahari: { index: 4, label: 'Bendahari' },
+                voting_ajk: { index: 5, label: 'AJK' }
+            };
+            return roleByPhase[phase] || null;
+        }
+
+        function updateSystemPhase(response) {
+            const rows = response.table.rows || [];
+            const phaseRow = rows.find(row => getCellValue(row, 0) === 'Fasa Sistem');
+            currentSystemPhase = phaseRow ? getCellValue(phaseRow, 1) || 'nomination' : 'nomination';
+
+            if (latestParticipationResponse) {
+                updateParticipationStats(latestParticipationResponse);
+            }
+        }
+
         function updateParticipationStats(response) {
             try {
+                latestParticipationResponse = response;
                 const rows = response.table.rows || [];
                 const eligibleRows = rows.filter(row => isFilledCell(row.c && row.c[0]));
                 const total = eligibleRows.length;
                 const nominated = eligibleRows.filter(row => getCellValue(row, 1) === true).length;
                 const notNominated = Math.max(total - nominated, 0);
-                const voteColumns = [
-                    { index: 2, label: 'Pengerusi' },
-                    { index: 3, label: 'Setiausaha' },
-                    { index: 4, label: 'Bendahari' },
-                    { index: 5, label: 'AJK' }
-                ];
-                const activeVote = voteColumns
-                    .map(role => ({
-                        label: role.label,
-                        count: eligibleRows.filter(row => isFilledCell(row.c && row.c[role.index])).length
-                    }))
-                    .find(role => role.count > 0);
+                const activeVoteRole = getActiveVoteRole(currentSystemPhase);
 
                 renderNominationChart(nominated, notNominated, total);
 
-                if (activeVote) {
-                    const votePct = total ? ((activeVote.count / total) * 100).toFixed(1) : '0.0';
-                    participationMessage.textContent = `Undian ${activeVote.label}: ${activeVote.count}/${total} (${votePct}%) telah mengundi.`;
+                if (activeVoteRole) {
+                    const voted = eligibleRows.filter(row => isFilledCell(row.c && row.c[activeVoteRole.index])).length;
+                    const votePct = total ? ((voted / total) * 100).toFixed(1) : '0.0';
+                    participationMessage.innerHTML = `Sistem kini di fasa <strong>Undian ${activeVoteRole.label}</strong>.<br>${voted}/${total} (${votePct}%) telah mengundi.`;
                 } else {
                     participationMessage.textContent = `${nominated} daripada ${total} ahli layak telah membuat pencalonan.`;
                 }
@@ -315,21 +229,29 @@
             }
         }
 
-        function loadParticipationStats() {
-            const oldScript = document.getElementById('participationStatsScript');
+        function loadSheetData(scriptId, sheet, callbackName) {
+            const oldScript = document.getElementById(scriptId);
             if (oldScript) oldScript.remove();
 
             const script = document.createElement('script');
-            script.id = 'participationStatsScript';
-            script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=responseHandler:updateParticipationStats&sheet=${encodeURIComponent(sheetName)}&cacheBust=${Date.now()}`;
+            script.id = scriptId;
+            script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=responseHandler:${callbackName}&sheet=${encodeURIComponent(sheet)}&cacheBust=${Date.now()}`;
             script.onerror = () => {
-                participationMessage.textContent = 'Statistik belum dapat dimuatkan buat masa ini.';
+                participationMessage.textContent = 'Ralat sambungan: Statistik tidak dapat dimuatkan.';
             };
             document.body.appendChild(script);
         }
 
+        function loadParticipationStats() {
+            loadSheetData('systemPhaseScript', settingsSheetName, 'updateSystemPhase');
+            loadSheetData('participationStatsScript', sheetName, 'updateParticipationStats');
+        }
+
+        // Muatkan data semasa buka halaman dan ulangi setiap minit
         loadParticipationStats();
         setInterval(loadParticipationStats, 60000);
+        
+        // Sesuaikan carta apabila skrin berubah saiz
         window.addEventListener('resize', () => nominationChart.resize());
     </script>
 </body>
