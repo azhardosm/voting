@@ -92,6 +92,186 @@
             font-weight: 800;
             flex: 0 0 auto;
         }
+
+        .results-view {
+            display: none;
+        }
+
+        .results-view.show {
+            display: block;
+        }
+
+        .live-count-view {
+            display: block;
+        }
+
+        .live-count-view.hidden {
+            display: none;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 24px;
+        }
+
+        @media (min-width: 768px) {
+            .results-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .results-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .result-card {
+            background: rgba(17, 24, 39, 0.82);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 24px;
+            border-top: 4px solid;
+        }
+
+        .result-card.pengerusi { border-top-color: #3b82f6; }
+        .result-card.setiausaha { border-top-color: #22c55e; }
+        .result-card.bendahari { border-top-color: #ec4899; }
+        .result-card.ajk { border-top-color: #eab308; }
+
+        .result-card h2 {
+            font-size: 1.125rem;
+            font-weight: bold;
+            margin: 0 0 24px 0;
+            text-align: center;
+            color: #f3f4f6;
+        }
+
+        .result-item {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .position-label {
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .position-label.blue { color: #3b82f6; }
+        .position-label.green { color: #22c55e; }
+        .position-label.pink { color: #ec4899; }
+        .position-label.yellow { color: #eab308; }
+        .position-label.grey { color: #94a3b8; }
+
+        .candidate-name {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+            background: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            word-wrap: break-word;
+        }
+
+        .ajk-container {
+            grid-column: 1 / -1;
+            background: rgba(17, 24, 39, 0.82);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 24px;
+            border-top: 4px solid #eab308;
+        }
+
+        .ajk-container h2 {
+            font-size: 1.125rem;
+            font-weight: bold;
+            margin: 0 0 24px 0;
+            text-align: center;
+            color: #f3f4f6;
+        }
+
+        .ajk-list {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .ajk-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .ajk-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(234, 179, 8, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ajk-number {
+            width: 32px;
+            height: 32px;
+            background: #eab308;
+            color: #1e293b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .ajk-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #f3f4f6;
+        }
+
+        .waiting-results {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(17, 24, 39, 0.82);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+        }
+
+        .waiting-results i {
+            font-size: 4rem;
+            color: #4f46e5;
+            margin-bottom: 20px;
+            opacity: 0.6;
+            animation: pulse 2s infinite;
+        }
+
+        .waiting-results h2 {
+            font-size: 1.5rem;
+            margin: 0 0 12px 0;
+            color: #f3f4f6;
+        }
+
+        .waiting-results p {
+            color: #9ca3b8;
+            margin: 0;
+            font-size: 1rem;
+        }
     </style>
 </head>
 <body class="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
@@ -115,7 +295,7 @@
         <section class="panel rounded-2xl p-4 sm:p-5">
             <div class="grid gap-3 sm:grid-cols-3">
                 <div class="rounded-xl border border-white/10 bg-slate-950/45 p-4">
-                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-400">Ahli Layak</p>
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-400">Jumlah Layak</p>
                     <p id="totalEligible" class="mt-2 text-3xl font-black text-white">--</p>
                 </div>
                 <div class="rounded-xl border border-white/10 bg-slate-950/45 p-4">
@@ -165,34 +345,40 @@
         <section class="panel rounded-2xl p-4 sm:p-5">
             <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-200">Live Count Pencalonan</p>
-                    <h2 class="mt-1 text-lg font-bold text-white">Status Penyertaan Pencalonan</h2>
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-200">Live Count Sistem</p>
+                    <h2 class="mt-1 text-lg font-bold text-white">Status Penyertaan</h2>
                 </div>
                 <p id="nominationSummary" class="text-sm font-semibold text-gray-300">Memuatkan data...</p>
             </div>
             <div class="rounded-2xl border border-white/10 bg-slate-950/45 p-4">
                 <div class="mb-3 flex items-end justify-between gap-3">
                     <div>
-                        <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-gray-400">Peratus Selesai</p>
+                        <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-gray-400">Peratus Pencalonan</p>
                         <p id="nominationPercent" class="mt-1 text-4xl font-black text-emerald-300">--%</p>
                     </div>
                     <div class="text-right text-sm">
-                        <p id="nominationDone" class="font-bold text-white">-- sudah calon</p>
-                        <p id="nominationPending" class="mt-1 font-semibold text-gray-400">-- belum calon</p>
+                        <p id="nominationDone" class="font-bold text-white">-- sudah pencalonan</p>
+                        <p id="nominationPending" class="mt-1 font-semibold text-gray-400">-- belum pencalonan</p>
                     </div>
                 </div>
-                <div class="nomination-meter" title="Memuatkan statistik pencalonan">
+                <div class="nomination-meter" title="Memuatkan statistik penyertaan">
                     <div id="nominationMeterFill" class="nomination-meter-fill h-full"></div>
                 </div>
             </div>
         </section>
 
-        <section id="roleGrid" class="grid gap-4 lg:grid-cols-2"></section>
+        <section id="roleGrid" class="live-count-view grid gap-4 lg:grid-cols-2"></section>
+
+        <section id="resultsView" class="results-view">
+            <div class="results-grid" id="resultsGrid"></div>
+        </section>
     </main>
 
     <script>
         const SHEET_ID = '1Dwpdnj7BY6uFCNR70CzQTLEHB0VHJul4SHwtkmXHqpg';
-        const EMAIL_SHEET = 'EmailLayak';
+        const ELIGIBLE_SHEET = 'EmailLayak';  // Untuk hitung jumlah layak dan status setiap ahli
+        const VOTING_SHEET = 'UndianLive';      // Dibetulkan mengikut ejaan sebenar dalam code.gs
+        const NOMINATION_SHEET = 'Pencalonan';  // Diperlukan untuk sync calon rasmi sepertimana logik code.gs
         const SETTINGS_SHEET = 'Settings';
 
         const phases = [
@@ -219,7 +405,9 @@
 
         const state = {
             phase: 'nomination',
-            rows: [],
+            eligibleRows: [],      // Memegang data EmailLayak
+            votingRows: [],        // Memegang data UndianLive
+            nominationRows: [],    // Memegang data Pencalonan
             charts: {}
         };
 
@@ -311,21 +499,156 @@
             return String(value || '').trim();
         }
 
-        function getRoleResults(role) {
-            const counts = new Map();
+        /* ------------------------------------------------------------------------- 
+           ALGORITHM SEGERAK DENGAN CODE.GS (Source of truth live & final results)
+           ------------------------------------------------------------------------- */
+        
+        function getSortedCandidatesFromNominations(roleKey, excludeNames = []) {
+            let counts = {};
+            const exclusionSet = excludeNames.map(n => String(n).toUpperCase());
 
-            state.rows.forEach(row => {
-                const value = normalizeName(getCellValue(row, role.column));
-                if (!value) return;
-                counts.set(value, (counts.get(value) || 0) + 1);
+            const addCount = (nameStr, rowIndex) => {
+                if (!nameStr) return;
+                let originalName = String(nameStr).trim();
+                let keyName = originalName.toUpperCase();
+                
+                if (keyName && !exclusionSet.includes(keyName)) {
+                    if (!counts[keyName]) counts[keyName] = { name: originalName, count: 0, lastIndex: 0 };
+                    counts[keyName].count++;
+                    counts[keyName].lastIndex = rowIndex;
+                }
+            };
+
+            state.nominationRows.forEach((row, index) => {
+                if (roleKey === 'pengerusi') addCount(getCellValue(row, 2), index);
+                else if (roleKey === 'setiausaha') addCount(getCellValue(row, 3), index);
+                else if (roleKey === 'bendahari') addCount(getCellValue(row, 4), index);
+                else if (roleKey === 'ajk') {
+                    for (let col = 5; col < 13; col++) {
+                        addCount(getCellValue(row, col), index);
+                    }
+                }
             });
 
-            return Array.from(counts, ([name, count]) => ({ name, count }))
-                .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+            return Object.values(counts).sort((a, b) => {
+                if (b.count === a.count) return a.lastIndex - b.lastIndex; // Seri: susun ikut siapa diundi dulu (index terkecil)
+                return b.count - a.count; // Susun ikut jumlah terbanyak
+            });
+        }
+
+        function getSortedLiveResultsByRole(roleKey) {
+            let counts = {};
+
+            state.votingRows.forEach((row, index) => {
+                const jawatan = normalizeName(getCellValue(row, 2));
+                const calon = normalizeName(getCellValue(row, 3));
+
+                if (jawatan.toLowerCase() === roleKey && calon) {
+                    let original = calon;
+                    let key = original.toUpperCase();
+                    if (!counts[key]) counts[key] = { name: original, count: 0, lastIndex: 0 };
+                    counts[key].count++;
+                    counts[key].lastIndex = index;
+                }
+            });
+
+            return Object.values(counts).sort((a, b) => {
+                if (b.count === a.count) return a.lastIndex - b.lastIndex;
+                return b.count - a.count;
+            });
+        }
+
+        function getPriorRoleExclusions(roleKey) {
+            const roleOrder = ['pengerusi', 'setiausaha', 'bendahari'];
+            const targetIndex = roleKey === 'ajk' ? roleOrder.length : roleOrder.indexOf(roleKey);
+            if (targetIndex <= 0) return [];
+
+            let excludeNames = [];
+
+            for (let i = 0; i < targetIndex; i++) {
+                const priorRole = roleOrder[i];
+                const liveResults = getSortedLiveResultsByRole(priorRole);
+                
+                const lockedCandidates = liveResults.length > 0 
+                    ? liveResults.slice(0, 2)
+                    : getSortedCandidatesFromNominations(priorRole, []).slice(0, 3);
+
+                lockedCandidates.forEach(candidate => {
+                    const key = candidate.name ? String(candidate.name).trim().toUpperCase() : "";
+                    if (key && !excludeNames.includes(key)) excludeNames.push(key);
+                });
+            }
+
+            return excludeNames;
+        }
+
+        function getDynamicCandidates(roleKey) {
+            const excludeNames = getPriorRoleExclusions(roleKey);
+            const sorted = getSortedCandidatesFromNominations(roleKey, excludeNames);
+
+            return roleKey === 'ajk' ? sorted.slice(0, 16) : sorted.slice(0, 3);
+        }
+
+        function getRoleResults(roleObj) {
+            const roleKey = roleObj.key;
+            let resultsDict = {};
+
+            // 1. Muatkan calon-calon rasmi (Elak hilang calon yang mendapat 0 undi)
+            const officialCandidates = getDynamicCandidates(roleKey);
+            officialCandidates.forEach((c, idx) => {
+                let key = String(c.name).toUpperCase();
+                resultsDict[key] = { name: c.name, count: 0, lastIndex: 999999, originalIndex: idx };
+            });
+
+            // 2. Kirakan jumlah undian sebenar daripada UndianLive
+            state.votingRows.forEach((row, index) => {
+                let j = normalizeName(getCellValue(row, 2));
+                let c = normalizeName(getCellValue(row, 3));
+                
+                if (j.toLowerCase() === roleKey && c) {
+                    let cleanC = c.toUpperCase();
+                    // Hanya kira calon yang terdapat dalam senarai rasmi
+                    if (resultsDict[cleanC]) {
+                        resultsDict[cleanC].count++;
+                        resultsDict[cleanC].lastIndex = index;
+                    }
+                }
+            });
+
+            // 3. Kembalikan array bersusun mengikut standard code.gs (Count desc, LastIndex asc)
+            return Object.values(resultsDict).sort((a, b) => {
+                if (b.count === a.count) {
+                    if (a.lastIndex === b.lastIndex) {
+                        return a.originalIndex - b.originalIndex;
+                    }
+                    return a.lastIndex - b.lastIndex;
+                }
+                return b.count - a.count;
+            });
+        }
+
+        /* ------------------------------------------------------------------------- 
+           PENGIRAAN STATISTIK MENU UTAMA BERDASARKAN EMAILLAYAK
+           ------------------------------------------------------------------------- */
+
+        function getTotalEligible() {
+            return state.eligibleRows.length;
+        }
+
+        function getTotalNominated() {
+            // Berdasarkan boolean kolum B (index 1) di EmailLayak
+            return state.eligibleRows.filter(row => {
+                const val = getCellValue(row, 1);
+                return val === true || (val && String(val).toUpperCase() === 'TRUE');
+            }).length;
         }
 
         function getVoteCount(role) {
-            return state.rows.filter(row => isFilledCell(row.c && row.c[role.column])).length;
+            // Berdasarkan flag boolean spesifik rakan di EmailLayak
+            return state.eligibleRows.filter(row => {
+                const val = getCellValue(row, role.column);
+                return val === true || (val && String(val).toUpperCase() === 'TRUE');
+            }).length;
         }
 
         function isRoleClosed(role) {
@@ -360,46 +683,48 @@
         }
 
         function renderDashboard() {
-            const total = state.rows.length;
-            const nominated = state.rows.filter(row => getCellValue(row, 1) === true).length;
+            const total = getTotalEligible();
+            const nominated = getTotalNominated();
             const notNominated = Math.max(total - nominated, 0);
-            const nominationPercentValue = total ? ((nominated / total) * 100).toFixed(1) : '0.0';
+            const percentValue = total ? ((nominated / total) * 100).toFixed(1) : '0.0';
 
             phaseLabel.textContent = formatPhase(state.phase);
             totalEligible.textContent = total;
             totalNominated.textContent = nominated;
             lastUpdated.textContent = new Date().toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            nominationSummary.textContent = `${nominated} sudah calon | ${notNominated} belum calon (${nominationPercentValue}%)`;
-            renderNominationMeter(nominated, notNominated, nominationPercentValue);
+            nominationSummary.textContent = `${nominated} sudah membuat pencalonan | ${notNominated} belum (${percentValue}%)`;
+            renderNominationMeter(nominated, notNominated, percentValue);
 
             roles.forEach(role => {
                 const card = document.getElementById(`card-${role.key}`);
                 const badge = document.getElementById(`badge-${role.key}`);
                 const summary = document.getElementById(`summary-${role.key}`);
                 const button = document.getElementById(`button-${role.key}`);
-                const voted = getVoteCount(role);
-                const notVoted = Math.max(total - voted, 0);
-                const percent = total ? ((voted / total) * 100).toFixed(1) : '0.0';
+                
+                const roleVoted = getVoteCount(role);
+                const roleNotVoted = Math.max(total - roleVoted, 0);
+                const percent = total ? ((roleVoted / total) * 100).toFixed(1) : '0.0';
+                
                 const active = state.phase === role.activePhase;
                 const closed = isRoleClosed(role);
 
                 card.classList.toggle('active', active);
                 badge.textContent = active ? 'Live' : closed ? 'Ditutup' : 'Belum Dibuka';
                 badge.className = `inline-flex rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] ${active ? 'border-emerald-300/30 bg-emerald-500/15 text-emerald-200' : closed ? 'border-blue-300/20 bg-blue-500/10 text-blue-200' : 'border-white/10 bg-slate-950/55 text-gray-300'}`;
-                summary.textContent = `${voted}/${total} telah mengundi (${percent}%)`;
+                summary.textContent = `${roleVoted}/${total} telah mengundi (${percent}%)`;
                 button.disabled = !closed;
                 button.className = `mt-4 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-white transition disabled:cursor-not-allowed disabled:opacity-45 ${closed ? 'bg-blue-600 hover:bg-blue-500' : 'bg-slate-700 hover:bg-slate-600'}`;
 
-                renderRoleChart(role, voted, notVoted, percent);
+                renderRoleChart(role, roleVoted, roleNotVoted, percent);
             });
         }
 
-        function renderNominationMeter(nominated, notNominated, percent) {
+        function renderNominationMeter(voted, notVoted, percent) {
             nominationPercent.textContent = `${percent}%`;
-            nominationDone.textContent = `${nominated} sudah calon`;
-            nominationPending.textContent = `${notNominated} belum calon`;
+            nominationDone.textContent = `${voted} sudah pencalonan`;
+            nominationPending.textContent = `${notVoted} belum pencalonan`;
             nominationMeterFill.style.width = `${percent}%`;
-            nominationMeterFill.parentElement.title = `Sudah calon: ${nominated} | Belum calon: ${notNominated}`;
+            nominationMeterFill.parentElement.title = `Sudah pencalonan: ${voted} | Belum pencalonan: ${notVoted}`;
         }
 
         function renderRoleChart(role, voted, notVoted, percent) {
@@ -463,11 +788,11 @@
             } else if (role.key === 'ajk') {
                 html += '<p style="margin:0 0 14px;color:#64748b;font-size:13px;font-weight:700;text-align:center;">8 AJK TERTINGGI</p>';
                 topResults.forEach((item, index) => {
-                    html += buildResultRow(index + 1, item.name, `${item.count} undi`);
+                    html += buildResultRow(index + 1, item.name);
                 });
             } else {
                 topResults.forEach((item, index) => {
-                    html += buildWinnerBox(role.winners[index] || `KEDUDUKAN ${index + 1}`, item.name, item.count, index === 0 ? role.color : '#64748b');
+                    html += buildWinnerBox(role.winners[index] || `KEDUDUKAN ${index + 1}`, item.name, index === 0 ? role.color : '#64748b');
                 });
             }
 
@@ -483,26 +808,81 @@
             });
         }
 
-        function buildWinnerBox(label, name, count, color) {
+        function buildWinnerBox(label, name, color) {
             return `
                 <div style="position:relative;overflow:hidden;margin-bottom:12px;padding:18px;border-radius:16px;background:#ffffff;border:1px solid #e2e8f0;">
                     <i class="bi bi-award-fill" style="position:absolute;right:-8px;top:-14px;font-size:72px;color:${color};opacity:0.11;"></i>
                     <p style="margin:0 0 5px;color:${color};font-size:12px;font-weight:900;letter-spacing:0.08em;">${label}</p>
-                    <p style="margin:0;color:#1e293b;font-size:21px;font-weight:900;">${escapeHtml(name)} <span style="font-size:14px;color:#64748b;font-weight:700;">(${count} undi)</span></p>
+                    <p style="margin:0;color:#1e293b;font-size:21px;font-weight:900;">${escapeHtml(name)}</p>
                 </div>
             `;
         }
 
-        function buildResultRow(rank, name, votes) {
+        function buildResultRow(rank, name) {
             return `
                 <div class="result-row">
                     <span style="display:flex;align-items:center;gap:10px;font-weight:800;">
                         <span class="rank-pill">${rank}</span>
                         ${escapeHtml(name)}
                     </span>
-                    <span style="border-radius:999px;background:#fefce8;color:#a16207;padding:4px 10px;font-size:12px;font-weight:900;">${votes}</span>
                 </div>
             `;
+        }
+
+        function showResultPopupFromResults(roleKey) {
+            const roleObj = roles.find(r => r.key === roleKey);
+            if (!roleObj) return;
+
+            const results = getRoleResults(roleObj);
+            const topResults = results.slice(0, roleObj.top); // Menyesuaikan slice bergantung pada had role
+
+            let html = '<div style="text-align:left;">';
+
+            // Check if there's no voting data
+            if (topResults.length === 0) {
+                html = '<div style="text-align:center;padding:30px;">';
+                html += '<i class="bi bi-inbox" style="font-size:48px;color:#cbd5e1;margin-bottom:12px;display:block;"></i>';
+                html += '<p style="color:#64748b;font-size:16px;font-weight:600;margin:0;">Tiada Rekod Pengundian</p>';
+                html += '<p style="color:#94a3b8;font-size:13px;margin:8px 0 0;font-weight:500;">Belum ada data pengundian untuk jawatan ini</p>';
+                html += '</div>';
+            } else if (roleKey === 'ajk') {
+                html += '<p style="margin:0 0 14px;color:#64748b;font-size:13px;font-weight:700;text-align:center;">8 AJK TERTINGGI</p>';
+                topResults.forEach((item, index) => {
+                    html += `
+                        <div class="result-row">
+                            <span style="display:flex;align-items:center;gap:10px;font-weight:800;">
+                                <span class="rank-pill">${index + 1}</span>
+                                ${escapeHtml(item.name)}
+                            </span>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            } else {
+                [0, 1].forEach((idx) => {
+                    const item = topResults[idx];
+                    const label = roleObj.winners[idx] || `KEDUDUKAN ${idx + 1}`;
+                    const color = idx === 0 ? (roleObj.color || '#3b82f6') : '#64748b';
+                    
+                    html += `
+                        <div style="position:relative;overflow:hidden;margin-bottom:12px;padding:18px;border-radius:16px;background:#ffffff;border:1px solid #e2e8f0;">
+                            <i class="bi bi-award-fill" style="position:absolute;right:-8px;top:-14px;font-size:72px;color:${color};opacity:0.11;"></i>
+                            <p style="margin:0 0 5px;color:${color};font-size:12px;font-weight:900;letter-spacing:0.08em;">${label}</p>
+                            <p style="margin:0;color:#1e293b;font-size:21px;font-weight:900;">${item ? escapeHtml(item.name) : 'Tiada Calon'}</p>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+
+            Swal.fire({
+                title: roleObj.title,
+                html,
+                width: roleObj.key === 'ajk' ? '560px' : '500px',
+                confirmButtonText: 'Tutup Paparan',
+                confirmButtonColor: '#0f172a',
+                backdrop: 'rgba(15, 23, 42, 0.85)'
+            });
         }
 
         function escapeHtml(value) {
@@ -515,16 +895,166 @@
         }
 
         function updateSystemPhase(response) {
+            if (!response || !response.table) {
+                console.error('Settings sheet error: No response data');
+                phaseLabel.textContent = 'Ralat: Tidak dapat baca Settings sheet';
+                return;
+            }
             const rows = response.table.rows || [];
             const phaseRow = rows.find(row => getCellValue(row, 0) === 'Fasa Sistem');
             state.phase = phaseRow ? getCellValue(phaseRow, 1) || 'nomination' : 'nomination';
-            renderDashboard();
+            checkAndRender();
+        }
+
+        function updateEligibleData(response) {
+            if (!response || !response.table) {
+                console.error('EmailLayak sheet error: No response data');
+                return;
+            }
+            const rows = response.table.rows || [];
+            state.eligibleRows = rows.filter(row => isFilledCell(row.c && row.c[0]));
+            checkAndRender();
         }
 
         function updateVotingData(response) {
+            if (!response || !response.table) {
+                console.error('UndianLive sheet error: No response data');
+                return;
+            }
             const rows = response.table.rows || [];
-            state.rows = rows.filter(row => isFilledCell(row.c && row.c[0]));
-            renderDashboard();
+            state.votingRows = rows.filter(row => isFilledCell(row.c && row.c[0]));
+            checkAndRender();
+        }
+
+        function updateNominationData(response) {
+            if (!response || !response.table) {
+                console.error('Pencalonan sheet error: No response data');
+                return;
+            }
+            const rows = response.table.rows || [];
+            state.nominationRows = rows.filter(row => isFilledCell(row.c && row.c[0]));
+            checkAndRender();
+        }
+
+        function checkAndRender() {
+            const isClosed = state.phase === 'closed' || state.phase === 'published';
+            const liveCounting = document.querySelector('.live-count-view');
+            const resultsView = document.getElementById('resultsView');
+
+            if (isClosed) {
+                liveCounting.classList.add('hidden');
+                resultsView.classList.add('show');
+                renderResults();
+            } else {
+                liveCounting.classList.remove('hidden');
+                resultsView.classList.remove('show');
+                renderDashboard();
+            }
+        }
+
+        function renderResults() {
+            const resultsGrid = document.getElementById('resultsGrid');
+            phaseLabel.textContent = formatPhase(state.phase);
+
+            let html = '';
+
+            try {
+                // Pengerusi
+                html += buildResultCard('pengerusi', 'Pengerusi & Timbalan Pengerusi', 'blue');
+
+                // Setiausaha
+                html += buildResultCard('setiausaha', 'Setiausaha & Penolong Setiausaha', 'green');
+
+                // Bendahari
+                html += buildResultCard('bendahari', 'Bendahari & Penolong Bendahari', 'pink');
+
+                // AJK
+                html += buildAJKResultCard();
+            } catch (e) {
+                console.error('Error rendering results:', e);
+                html = '<div style="padding:20px;color:#f3f4f6;text-align:center;">Ralat memuat keputusan</div>';
+            }
+
+            resultsGrid.innerHTML = html;
+
+            // Attach event listeners to result cards
+            document.querySelectorAll('[data-result-button]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const role = e.currentTarget.getAttribute('data-result-button');
+                    showResultPopupFromResults(role);
+                });
+            });
+        }
+
+        function buildResultCard(role, title, colorClass) {
+            const roleObj = roles.find(r => r.key === role);
+            const results = getRoleResults(roleObj);
+            const topResults = results.slice(0, 2);
+
+            let html = `<div class="result-card ${role}">
+                <h2>${title}</h2>`;
+
+            if (topResults[0]) {
+                html += `<div class="result-item">
+                    <span class="position-label ${colorClass}">${roleObj.winners[0]}</span>
+                    <p class="candidate-name">${escapeHtml(topResults[0].name)}</p>
+                </div>`;
+            } else {
+                html += `<div class="result-item">
+                    <span class="position-label ${colorClass}">${roleObj.winners[0]}</span>
+                    <p class="candidate-name" style="background: #64748b; color: #f3f4f6;">Belum Ada Keputusan</p>
+                </div>`;
+            }
+
+            if (topResults[1]) {
+                html += `<div class="result-item">
+                    <span class="position-label grey">Naib Juara / ${roleObj.winners[1]}</span>
+                    <p class="candidate-name">${escapeHtml(topResults[1].name)}</p>
+                </div>`;
+            } else {
+                html += `<div class="result-item">
+                    <span class="position-label grey">Naib Juara / ${roleObj.winners[1]}</span>
+                    <p class="candidate-name" style="background: #64748b; color: #f3f4f6;">Belum Ada Keputusan</p>
+                </div>`;
+            }
+
+            html += `<button data-result-button="${role}" style="width:100%;margin-top:16px;padding:12px;background:#3b82f6;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#3b82f6'">
+                <i class="bi bi-award-fill"></i> Keputusan
+            </button>`;
+
+            html += `</div>`;
+            return html;
+        }
+
+        function buildAJKResultCard() {
+            const ajkRole = roles.find(r => r.key === 'ajk');
+            const results = getRoleResults(ajkRole);
+            const topResults = results.slice(0, 8);
+
+            let html = `<div class="ajk-container">
+                <h2>Delapan Ahli Jawatankuasa (AJK)</h2>
+                <div class="ajk-list">`;
+
+            for (let i = 0; i < 8; i++) {
+                if (topResults[i]) {
+                    html += `<div class="ajk-item">
+                        <div class="ajk-number">${i + 1}</div>
+                        <div class="ajk-name">${escapeHtml(topResults[i].name)}</div>
+                    </div>`;
+                } else {
+                    html += `<div class="ajk-item" style="opacity: 0.5;">
+                        <div class="ajk-number">${i + 1}</div>
+                        <div class="ajk-name">-</div>
+                    </div>`;
+                }
+            }
+
+            html += `</div>
+                <button data-result-button="ajk" style="width:100%;margin-top:16px;padding:12px;background:#eab308;color:#1e293b;border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background='#ca8a04'" onmouseout="this.style.background='#eab308'">
+                    <i class="bi bi-award-fill"></i> Keputusan
+                </button>
+            </div>`;
+            return html;
         }
 
         function loadSheetData(scriptId, sheet, callbackName) {
@@ -534,15 +1064,20 @@
             const script = document.createElement('script');
             script.id = scriptId;
             script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:${callbackName}&sheet=${encodeURIComponent(sheet)}&cacheBust=${Date.now()}`;
+            
             script.onerror = () => {
-                phaseLabel.textContent = 'Gagal memuatkan data';
+                console.error(`❌ Script load error for sheet: ${sheet} (callback: ${callbackName})`);
+                phaseLabel.textContent = `Ralat memuatkan: ${sheet}`;
             };
+            
             document.body.appendChild(script);
         }
 
         function refreshData() {
             loadSheetData('phaseScript', SETTINGS_SHEET, 'updateSystemPhase');
-            loadSheetData('voteScript', EMAIL_SHEET, 'updateVotingData');
+            loadSheetData('eligibleScript', ELIGIBLE_SHEET, 'updateEligibleData');
+            loadSheetData('votingScript', VOTING_SHEET, 'updateVotingData');
+            loadSheetData('nominationScript', NOMINATION_SHEET, 'updateNominationData');
         }
 
         renderShell();
