@@ -10,25 +10,27 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Pustaka Tambahan: Bootstrap Icons & SweetAlert2 untuk Popup -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <!-- Memuatkan Tailwind CSS untuk penggayaan responsif -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            /* Latar belakang kelabu gelap yang kemas menyerupai tema 'dark mode' yang elegan */
             background-color: #111827; 
             color: #f3f4f6;
         }
         
-        /* Kesan 'hover' dan animasi lembut untuk butang */
         .link-button {
             transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
         }
         .link-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-            background-color: #1e40af; /* Warna biru sedikit gelap apabila di-hover */
+            background-color: #1e40af; 
         }
         .link-button:active {
             transform: translateY(1px);
@@ -45,24 +47,13 @@
             background: rgba(15, 23, 42, 0.74);
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
         }
-        
-        /* Gaya tambahan apabila butang ditutup */
-        .btn-disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            pointer-events: none;
-            background-color: #374151 !important; /* Kelabu */
-            border-color: #4b5563 !important;
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-start pt-12 pb-8 px-4 sm:px-6 lg:px-8">
     
     <main class="w-full max-w-md mx-auto flex flex-col items-center">
         
-        <!-- Gambar Logo -->
         <div class="relative w-36 h-28 mb-4 flex items-center justify-center">
-            <!-- Menggunakan imej baharu: LOGO-BIPD-BM.png untuk kegunaan Netlify -->
             <img 
                 src="logo-kelab-bipd.png" 
                 alt="Logo Kelab BIPD" 
@@ -71,25 +62,22 @@
             >
         </div>
 
-        <!-- Tajuk Halaman / Nama Kelab -->
         <h1 class="text-2xl font-bold text-white mb-2 text-center tracking-tight">
             Kelab BIPD
         </h1>
         
-        <!-- Penerangan ringkas (Pilihan) -->
         <p class="text-gray-400 text-sm mb-8 text-center px-4">
             Pautan rasmi untuk platform dan perkhidmatan Kelab BIPD.
         </p>
 
-        <!-- Countdown Tutup Pencalonan -->
         <section class="countdown-card w-full mb-6 border border-blue-400/20 rounded-2xl p-4 sm:p-5 shadow-lg overflow-hidden">
             <div class="flex items-center justify-between gap-3 mb-4">
                 <div>
                     <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-blue-200">
-                        Tutup Pencalonan
+                        Buka Undian
                     </p>
                     <p class="text-sm font-medium text-white mt-1">
-                        28 Julai 2026, 12:00 tengah hari
+                        30 Julai 2026, 10:00 pagi
                     </p>
                 </div>
                 <div class="h-10 w-10 shrink-0 rounded-full bg-blue-500/15 border border-blue-300/20 flex items-center justify-center text-blue-100">
@@ -118,27 +106,36 @@
                 </div>
             </div>
             <p id="countdownMessage" class="mt-4 rounded-lg bg-blue-500/10 border border-blue-300/10 px-3 py-2 text-xs text-blue-100 text-center">
-                Masa berbaki sebelum pencalonan ditutup
+                Masa berbaki sebelum sesi undian dibuka
             </p>
         </section>
 
         <div class="w-full flex flex-col gap-4">
             
-            <!-- Butang Pautan 1: e-Undi (Ditambah ID untuk kawalan JS) -->
             <a 
-                id="eUndiButton"
-                href="https://script.google.com/macros/s/" 
+                id="eUndiBtn"
+                href="#" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                class="link-button block w-full bg-blue-600 text-white font-medium text-center py-4 px-6 rounded-xl shadow-md border border-blue-500/30 flex items-center justify-center space-x-2"
+                class="block w-full bg-gray-700 text-gray-400 font-medium text-center py-4 px-6 rounded-xl shadow-md border border-gray-600/50 flex items-center justify-center space-x-2 pointer-events-none cursor-not-allowed transition-all duration-300"
             >
-                <!-- Ikon (Pilihan - menggunakan SVG inline untuk kemasan) -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span id="eUndiText">e-Undi Kelab BIPD</span>
+                <span id="eUndiBtnText">Menunggu Waktu Undian...</span>
             </a>
             
+            <button 
+                id="kehadiranBtn"
+                onclick="bukaPopupKehadiran()" 
+                class="block w-full bg-gray-700 text-gray-400 font-medium text-center py-4 px-6 rounded-xl shadow-md border border-gray-600/50 flex items-center justify-center space-x-2 pointer-events-none cursor-not-allowed transition-all duration-300"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                <span id="kehadiranBtnText">Kehadiran Dibuka 8:00 Pagi</span>
+            </button>
+
         </div>
     </main>
 
@@ -149,44 +146,61 @@
     </footer>
 
     <script>
-        // Set tahun semasa secara automatik di footer
+        // Set tahun semasa
         document.getElementById('currentYear').textContent = new Date().getFullYear();
 
-        const nominationDeadline = new Date('2026-07-28T12:00:00+08:00').getTime();
+        // Tetapan masa e-Undi (30 Julai 2026 10:00 pagi)
+        const countdownTarget = new Date('2026-07-30T10:00:00+08:00').getTime();
+        
+        // Tetapan masa Kehadiran (30 Julai 2026 08:00 pagi)
+        const kehadiranTarget = new Date('2026-07-30T08:00:00+08:00').getTime();
+
         const countdownDays = document.getElementById('countdownDays');
         const countdownHours = document.getElementById('countdownHours');
         const countdownMinutes = document.getElementById('countdownMinutes');
         const countdownSeconds = document.getElementById('countdownSeconds');
         const countdownMessage = document.getElementById('countdownMessage');
-        const eUndiButton = document.getElementById('eUndiButton');
-        const eUndiText = document.getElementById('eUndiText');
+        const eUndiBtn = document.getElementById('eUndiBtn');
+        const eUndiBtnText = document.getElementById('eUndiBtnText');
+        
+        const kehadiranBtn = document.getElementById('kehadiranBtn');
+        const kehadiranBtnText = document.getElementById('kehadiranBtnText');
+        
+        // PENTING: URL Web App (Satu-satunya pautan yang diperlukan sekarang)
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbzPweSKMhhCQUvKYIGexImjmgP1JflK-J-gRtbV_ThwCWMR1JzR_wfyaS8k5F7E-PvkcA/exec';
+        
+        let senaraiNamaKehadiran = [];
 
         function padTime(value) {
             return String(value).padStart(2, '0');
         }
 
-        function updateNominationCountdown() {
-            const distance = nominationDeadline - Date.now();
+        // Fungsi kiraan masa
+        function updateCountdown() {
+            const now = Date.now();
+            
+            // 1. Semak status butang Kehadiran (Buka 8:00 Pagi)
+            if (now >= kehadiranTarget) {
+                kehadiranBtn.classList.remove('bg-gray-700', 'text-gray-400', 'border-gray-600/50', 'pointer-events-none', 'cursor-not-allowed');
+                kehadiranBtn.classList.add('bg-green-600', 'hover:bg-green-700', 'text-white', 'border-green-500/30', 'link-button');
+                kehadiranBtnText.textContent = "Rekod Kehadiran Sesi";
+            }
 
-            // Jika masa tamat, jadikan sifar dan matikan butang undi
+            // 2. Semak status butang e-Undi (Buka 10:00 Pagi)
+            const distance = countdownTarget - now;
+
             if (distance <= 0) {
                 countdownDays.textContent = '00';
                 countdownHours.textContent = '00';
                 countdownMinutes.textContent = '00';
                 countdownSeconds.textContent = '00';
-                countdownMessage.textContent = 'Terima kasih atas pencalonan anda. Sesi undian akan dibuka secara rasmi semasa Mesyuarat Agung berlangsung.';
-                countdownMessage.classList.add('bg-red-500/10', 'border-red-300/10', 'text-red-200');
-                countdownMessage.classList.remove('bg-blue-500/10', 'border-blue-300/10', 'text-blue-100');
+                countdownMessage.textContent = 'Sesi undian kini dibuka!';
                 
-                // Matikan butang e-Undi
-                if (eUndiButton) {
-                    eUndiButton.removeAttribute('href'); // Hilangkan fungsi klik
-                    eUndiButton.classList.add('btn-disabled'); // Tambah class kelabu
-                    eUndiButton.classList.remove('link-button', 'bg-blue-600'); // Buang fungsi hover
-                    eUndiButton.setAttribute('aria-disabled', 'true');
-                    eUndiText.textContent = 'e-Undi Ditutup';
-                }
-                
+                // Aktifkan butang e-Undi
+                eUndiBtn.href = scriptUrl;
+                eUndiBtn.classList.remove('bg-gray-700', 'text-gray-400', 'border-gray-600/50', 'pointer-events-none', 'cursor-not-allowed');
+                eUndiBtn.classList.add('bg-blue-600', 'text-white', 'border-blue-500/30', 'link-button');
+                eUndiBtnText.textContent = "e-Undi Kelab BIPD";
                 return;
             }
 
@@ -201,8 +215,133 @@
             countdownSeconds.textContent = padTime(seconds);
         }
 
-        updateNominationCountdown();
-        setInterval(updateNominationCountdown, 1000);
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        function fetchNamesViaAppScript() {
+            const callbackName = 'namaCallback_' + Date.now();
+            const url = scriptUrl + '?action=get_senarai_nama&callback=' + callbackName;
+            
+            // Pasangkan pemintas balasan
+            window[callbackName] = function(data) {
+                if (data.success && data.names) {
+                    senaraiNamaKehadiran = data.names.sort((a, b) => a.localeCompare(b));
+                } else {
+                    console.error('Gagal menarik senarai nama:', data.msg);
+                }
+                delete window[callbackName];
+                document.getElementById(callbackName).remove();
+            };
+
+            // Suntik script untuk panggil API JSONP
+            const script = document.createElement('script');
+            script.id = callbackName;
+            script.src = url;
+            script.onerror = function() {
+                console.error('Gagal berhubung dengan pangkalan data nama.');
+                delete window[callbackName];
+                script.remove();
+            };
+            document.body.appendChild(script);
+        }
+        
+        // Panggil fungsi tarik nama secara automatik bila page dimuatkan
+        fetchNamesViaAppScript(); 
+        
+        function bukaPopupKehadiran() {
+            if (senaraiNamaKehadiran.length === 0) {
+                Swal.fire({
+                    title: 'Memuatkan...',
+                    text: 'Sistem sedang mengambil senarai nama. Sila cuba lagi sebentar.',
+                    icon: 'info',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+                return;
+            }
+            
+            // Bina pilihan dropdown
+            let optionsHtml = '<option value="">-- Sila Pilih Nama Anda --</option>';
+            senaraiNamaKehadiran.forEach(name => {
+                optionsHtml += `<option value="${name}">${name}</option>`;
+            });
+
+            Swal.fire({
+                title: 'Rekod Kehadiran',
+                html: `
+                    <div class="text-left mb-4 mt-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Penuh</label>
+                        <select id="swal-nama" class="w-full border border-gray-300 rounded-lg p-3 shadow-sm focus:border-green-500 focus:ring-1 focus:ring-green-500 bg-white text-gray-900" style="font-size: 15px;">
+                            ${optionsHtml}
+                        </select>
+                    </div>
+                    <div class="text-left flex items-center gap-3 mt-4 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        <input type="checkbox" id="swal-hadir" class="w-6 h-6 text-green-600 border-gray-300 rounded focus:ring-green-500 cursor-pointer">
+                        <label for="swal-hadir" class="text-sm font-medium text-gray-700 cursor-pointer select-none">Hadir</label>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: '<i class="bi bi-send-check"></i> Hantar Kehadiran',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#16a34a',
+                cancelButtonColor: '#475569',
+                preConfirm: () => {
+                    const nama = document.getElementById('swal-nama').value;
+                    const hadir = document.getElementById('swal-hadir').checked;
+                    
+                    if (!nama) {
+                        Swal.showValidationMessage('Sila pilih nama anda dari senarai.');
+                        return false;
+                    }
+                    if (!hadir) {
+                        Swal.showValidationMessage('Sila tick kotak pengesahan kehadiran.');
+                        return false;
+                    }
+                    return nama;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    hantarDataKehadiran(result.value);
+                }
+            });
+        }
+
+        function hantarDataKehadiran(nama) {
+            Swal.fire({
+                title: 'Menyimpan rekod...',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            const callbackName = 'kehadiranCallback_' + Date.now();
+            const url = scriptUrl + '?action=kehadiran&nama=' + encodeURIComponent(nama) + '&callback=' + callbackName;
+            
+            // Pasangkan pemintas balasan
+            window[callbackName] = function(data) {
+                if (data.success) {
+                    Swal.fire('Berjaya', 'Kehadiran anda telah berjaya direkodkan dalam sistem.', 'success');
+                } else {
+                    Swal.fire('Ralat', data.msg || 'Gagal merekod kehadiran.', 'error');
+                }
+                delete window[callbackName];
+                document.getElementById(callbackName).remove();
+            };
+
+            // Suntik script untuk hantar maklumat (metod JSONP)
+            const script = document.createElement('script');
+            script.id = callbackName;
+            script.src = url;
+            script.onerror = function() {
+                Swal.fire({
+                    title: 'Ralat Pelayan',
+                    html: 'Gagal berhubung dengan pangkalan data.<br><br><span style="font-size:0.9em; color:#ef4444;"><b>Nota Penting:</b> Jika anda baru menukar kod backend, sila pastikan anda membuat <b>New Deployment</b> di Apps Script.</span>',
+                    icon: 'error'
+                });
+                delete window[callbackName];
+                script.remove();
+            };
+            document.body.appendChild(script);
+        }
     </script>
 </body>
 </html>
