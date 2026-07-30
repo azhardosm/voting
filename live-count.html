@@ -267,7 +267,7 @@
         <section class="panel rounded-2xl p-4 sm:p-5">
             <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-blue-200">Sesi Undian Dibuka</p>
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-blue-200">Tarikh & Masa</p>
                     <h2 class="mt-1 text-lg font-bold text-white">30 Julai 2026, 11:00 Pagi</h2>
                 </div>
                 <p id="nominationCountdownMessage" class="text-sm font-semibold text-blue-100">Masa berbaki sebelum undian dibuka</p>
@@ -292,7 +292,7 @@
             </div>
             <div id="nominationClosedMessage" class="hidden rounded-xl border border-emerald-300/20 bg-emerald-500/10 px-4 py-5 text-center">
                 <p class="text-base font-bold leading-relaxed text-emerald-100">
-                    Sesi Undian Sedang Berlangsung.
+                    MESYUARAT AGUNG KELAB BIPD
                 </p>
             </div>
         </section>
@@ -405,7 +405,7 @@
                 countdownHours.textContent = '00';
                 countdownMinutes.textContent = '00';
                 countdownSeconds.textContent = '00';
-                nominationCountdownMessage.textContent = 'Sesi undian telah dibuka.';
+                nominationCountdownMessage.textContent = '';
                 nominationCountdownGrid.classList.add('hidden');
                 nominationClosedMessage.classList.remove('hidden');
                 return;
