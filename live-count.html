@@ -5,13 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Counting Undian Kelab BIPD</title>
 
+    <!-- Memuatkan Font dan Ikon -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Memuatkan Tailwind, ECharts, SweetAlert2 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Memuatkan Pustaka (Library) Untuk Eksport PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
     <style>
         body {
@@ -230,11 +237,12 @@
     </style>
 </head>
 <body class="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
+    <!-- -->
     <main class="mx-auto flex w-full max-w-6xl flex-col gap-5">
         <header class="panel rounded-2xl px-4 py-4 sm:px-5">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div class="flex items-center gap-3">
-                    <img src="logo-kelab-bipd.png" alt="Logo Kelab BIPD" class="h-14 w-16 object-contain">
+                    <img src="logo-kelab-bipd.png" alt="Logo Kelab BIPD" class="h-14 w-16 object-contain" onerror="this.src='https://placehold.co/100x100/1e293b/ffffff?text=BIPD'">
                     <div>
                         <h1 class="text-xl font-bold tracking-tight text-white sm:text-2xl">Live Counting Undian</h1>
                         <p class="mt-1 text-sm text-gray-400">Kelab BIPD</p>
@@ -264,10 +272,11 @@
             </div>
         </section>
 
+        <!-- -->
         <section class="panel rounded-2xl p-4 sm:p-5">
             <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-blue-200">Tarikh & Masa</p>
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-blue-200">Sesi Undian Dibuka</p>
                     <h2 class="mt-1 text-lg font-bold text-white">30 Julai 2026, 11:00 Pagi</h2>
                 </div>
                 <p id="nominationCountdownMessage" class="text-sm font-semibold text-blue-100">Masa berbaki sebelum undian dibuka</p>
@@ -292,7 +301,7 @@
             </div>
             <div id="nominationClosedMessage" class="hidden rounded-xl border border-emerald-300/20 bg-emerald-500/10 px-4 py-5 text-center">
                 <p class="text-base font-bold leading-relaxed text-emerald-100">
-                    MESYUARAT AGUNG KELAB BIPD
+                    Sesi Undian Sedang Berlangsung.
                 </p>
             </div>
         </section>
@@ -325,16 +334,52 @@
             </div>
         </section>
 
-        <section id="roleGrid" class="live-count-view grid gap-4 lg:grid-cols-2"></section>
+        <!-- -->
+        <section class="panel rounded-2xl p-4 sm:p-5 mt-2">
+            <div class="mb-4">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-blue-200">Muat Turun Laporan</p>
+                <h2 class="mt-1 text-lg font-bold text-white">Eksport Data Rasmi (Sistem)</h2>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2">
+                <!-- Laporan Kehadiran -->
+                <div class="rounded-xl border border-white/10 bg-slate-950/45 p-4 flex flex-col justify-between">
+                    <h3 class="font-bold text-emerald-300 mb-4"><i class="bi bi-person-check-fill mr-2"></i>Laporan Kehadiran</h3>
+                    <div class="flex gap-2">
+                        <button onclick="downloadLaporan('kehadiran', 'csv')" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-2.5 px-3 rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition">
+                            <i class="bi bi-filetype-csv text-lg"></i> CSV
+                        </button>
+                        <button onclick="downloadLaporan('kehadiran', 'pdf')" class="flex-1 bg-red-900/80 hover:bg-red-800 text-white py-2.5 px-3 rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition border border-red-700/50">
+                            <i class="bi bi-file-earmark-pdf-fill text-lg"></i> PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Laporan Undian -->
+                <div class="rounded-xl border border-white/10 bg-slate-950/45 p-4 flex flex-col justify-between">
+                    <h3 class="font-bold text-blue-300 mb-4"><i class="bi bi-bar-chart-fill mr-2"></i>Laporan Keputusan Undian</h3>
+                    <div class="flex gap-2">
+                        <button onclick="downloadLaporan('undian', 'csv')" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-2.5 px-3 rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition">
+                            <i class="bi bi-filetype-csv text-lg"></i> CSV
+                        </button>
+                        <button onclick="downloadLaporan('undian', 'pdf')" class="flex-1 bg-red-900/80 hover:bg-red-800 text-white py-2.5 px-3 rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition border border-red-700/50">
+                            <i class="bi bi-file-earmark-pdf-fill text-lg"></i> PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="roleGrid" class="live-count-view grid gap-4 lg:grid-cols-2 mt-2"></section>
 
         <section id="resultsView" class="results-view">
             <div class="results-grid" id="resultsGrid"></div>
         </section>
     </main>
 
+    <!-- -->
     <script>
         const SHEET_ID = '1Dwpdnj7BY6uFCNR70CzQTLEHB0VHJul4SHwtkmXHqpg';
-        const ELIGIBLE_SHEET = 'EmailLayak';  // Untuk hitung jumlah layak dan status setiap ahli
+        const ELIGIBLE_SHEET = 'EmailLayak';  
         const VOTING_SHEET = 'UndianLive';      
         const NOMINATION_SHEET = 'Pencalonan';  
         const SETTINGS_SHEET = 'Settings';
@@ -342,7 +387,7 @@
         const phases = [
             'nomination',
             'pause_nomination',
-            'voting_pengerusi', // Dikekalkan key backend pengerusi supaya sink dengan DB
+            'voting_pengerusi', 
             'pause_pengerusi',
             'voting_setiausaha',
             'pause_setiausaha',
@@ -364,6 +409,7 @@
         const state = {
             phase: 'nomination',
             eligibleRows: [],      
+            eligibleCols: [], // Tambahan untuk simpan format kolum bagi laporan
             votingRows: [],        
             nominationRows: [],    
             charts: {}
@@ -379,7 +425,10 @@
         const nominationDone = document.getElementById('nominationDone');
         const nominationPending = document.getElementById('nominationPending');
         const nominationMeterFill = document.getElementById('nominationMeterFill');
-        const nominationDeadline = new Date('2026-07-30T10:00:00+08:00').getTime();
+        
+        // Tetapan waktu ke 11:00 Pagi
+        const nominationDeadline = new Date('2026-07-30T11:00:00+08:00').getTime();
+        
         const countdownDays = document.getElementById('countdownDays');
         const countdownHours = document.getElementById('countdownHours');
         const countdownMinutes = document.getElementById('countdownMinutes');
@@ -405,7 +454,7 @@
                 countdownHours.textContent = '00';
                 countdownMinutes.textContent = '00';
                 countdownSeconds.textContent = '00';
-                nominationCountdownMessage.textContent = '';
+                nominationCountdownMessage.textContent = 'Sesi undian telah dibuka.';
                 nominationCountdownGrid.classList.add('hidden');
                 nominationClosedMessage.classList.remove('hidden');
                 return;
@@ -458,7 +507,7 @@
         }
 
         /* ------------------------------------------------------------------------- 
-           STREAMING_CHUNK:Sorting Core Engine connected to source Code.gs 
+           STREAMING_CHUNK:Logik Pengiraan Calon dan Keputusan
            ------------------------------------------------------------------------- */
         
         function getSortedCandidatesFromNominations(roleKey, excludeNames = []) {
@@ -478,7 +527,6 @@
             };
 
             state.nominationRows.forEach((row, index) => {
-                // Walaupun backend panggil 'presiden', CSV sheet asal mungkin simpan as pengerusi di index 2
                 if (roleKey === 'pengerusi') addCount(getCellValue(row, 2), index);
                 else if (roleKey === 'setiausaha') addCount(getCellValue(row, 3), index);
                 else if (roleKey === 'bendahari') addCount(getCellValue(row, 4), index);
@@ -490,8 +538,8 @@
             });
 
             return Object.values(counts).sort((a, b) => {
-                if (b.count === a.count) return a.lastIndex - b.lastIndex; // Seri: susun ikut siapa diundi dulu (index terkecil)
-                return b.count - a.count; // Susun ikut jumlah terbanyak
+                if (b.count === a.count) return a.lastIndex - b.lastIndex;
+                return b.count - a.count; 
             });
         }
 
@@ -552,19 +600,16 @@
             const roleKey = roleObj.key;
             let resultsDict = {};
 
-            // 1. Muatkan calon-calon rasmi (Elak hilang calon yang mendapat 0 undi)
             const officialCandidates = getDynamicCandidates(roleKey);
             officialCandidates.forEach((c, idx) => {
                 let key = String(c.name).toUpperCase();
                 resultsDict[key] = { name: c.name, count: 0, lastIndex: 999999, originalIndex: idx };
             });
 
-            // 2. Kirakan jumlah undian sebenar daripada UndianLive
             state.votingRows.forEach((row, index) => {
                 let j = normalizeName(getCellValue(row, 2));
                 let c = normalizeName(getCellValue(row, 3));
                 
-                // Catcher to adapt if DB uses 'presiden'
                 let checkRole = j.toLowerCase();
                 if (checkRole === 'presiden') checkRole = 'pengerusi';
                 
@@ -577,7 +622,6 @@
                 }
             });
 
-            // 3. Kembalikan array bersusun mengikut standard code.gs (Count desc, LastIndex asc)
             return Object.values(resultsDict).sort((a, b) => {
                 if (b.count === a.count) {
                     if (a.lastIndex === b.lastIndex) {
@@ -590,23 +634,150 @@
         }
 
         /* ------------------------------------------------------------------------- 
-           STREAMING_CHUNK:Main Dashboard Status Updates 
+           STREAMING_CHUNK:Logik Dashboard & Ekstrak Muat Turun Data (Eksport)
            ------------------------------------------------------------------------- */
 
-        function getTotalEligible() {
-            return state.eligibleRows.length;
+        // MUAT TURUN & FORMAT DATA (CSV / PDF)
+        function downloadCSV(csvContent, filename) {
+            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' }); 
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
+
+        function getKehadiranData() {
+            let namaIdx = -1;
+            let kehadiranIdx = -1;
+            
+            if (state.eligibleCols) {
+                state.eligibleCols.forEach((col, idx) => {
+                    const label = String(col.label || '').toLowerCase();
+                    if (label.includes('nama')) namaIdx = idx;
+                    if (label.includes('kehadiran')) kehadiranIdx = idx;
+                });
+            }
+
+            const data = [];
+            state.eligibleRows.forEach((row, i) => {
+                let nama = namaIdx !== -1 ? getCellValue(row, namaIdx) : (getCellValue(row, 0) || `Ahli ${i+1}`); 
+                
+                let hadirStatus = 'Tidak Hadir';
+                if (kehadiranIdx !== -1) {
+                    const val = getCellValue(row, kehadiranIdx);
+                    if (val && String(val).trim().toLowerCase() === 'hadir') hadirStatus = 'Hadir';
+                } else {
+                    if(row.c) {
+                        for (let j = 6; j < row.c.length; j++) {
+                            const val = getCellValue(row, j);
+                            if (val && String(val).trim().toLowerCase() === 'hadir') {
+                                hadirStatus = 'Hadir';
+                                break;
+                            }
+                        }
+                    }
+                }
+                data.push([nama, hadirStatus]);
+            });
+            
+            // Susun ikut nama (Alphabetical)
+            data.sort((a, b) => String(a[0]).localeCompare(String(b[0])));
+            return data;
+        }
+
+        function getUndianData() {
+            const data = [];
+            roles.forEach(role => {
+                const results = getRoleResults(role);
+                results.forEach((item, index) => {
+                    data.push([role.title, item.name, item.count, index + 1]);
+                });
+            });
+            return data;
+        }
+
+        function downloadLaporan(jenis, format) {
+            // Semak PDF library
+            if (!window.jspdf && format === 'pdf') {
+                Swal.fire('Sila Tunggu', 'Enjin pencetak PDF sedang dimuatkan, cuba lagi.', 'info');
+                return;
+            }
+
+            if (jenis === 'kehadiran') {
+                const data = getKehadiranData();
+                
+                if (format === 'csv') {
+                    let csvContent = "Bil,Nama Penuh,Status Kehadiran\n";
+                    data.forEach((row, i) => {
+                        csvContent += `${i+1},"${row[0]}","${row[1]}"\n`;
+                    });
+                    downloadCSV(csvContent, "Laporan_Kehadiran_BIPD.csv");
+                } 
+                else if (format === 'pdf') {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF();
+                    doc.setFont("helvetica", "bold");
+                    doc.text("LAPORAN KEHADIRAN KELAB BIPD", 14, 15);
+                    doc.setFontSize(10);
+                    doc.setFont("helvetica", "normal");
+                    doc.text("Dicetak pada: " + new Date().toLocaleString('ms-MY'), 14, 22);
+                    
+                    doc.autoTable({
+                        startY: 28,
+                        head: [['Bil', 'Nama Penuh', 'Status Kehadiran']],
+                        body: data.map((row, i) => [i+1, row[0], row[1]]),
+                        theme: 'grid',
+                        headStyles: { fillColor: [16, 185, 129] } // Emerald color
+                    });
+                    doc.save("Laporan_Kehadiran_BIPD.pdf");
+                }
+            } 
+            else if (jenis === 'undian') {
+                const data = getUndianData();
+                
+                if (format === 'csv') {
+                    let csvContent = "Jawatan,Nama Calon,Jumlah Undi,Kedudukan\n";
+                    data.forEach(row => {
+                        csvContent += `"${row[0]}","${row[1]}",${row[2]},${row[3]}\n`;
+                    });
+                    downloadCSV(csvContent, "Laporan_Keputusan_Undian_BIPD.csv");
+                } 
+                else if (format === 'pdf') {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF();
+                    doc.setFont("helvetica", "bold");
+                    doc.text("LAPORAN KEPUTUSAN UNDIAN KELAB BIPD", 14, 15);
+                    doc.setFontSize(10);
+                    doc.setFont("helvetica", "normal");
+                    doc.text("Dicetak pada: " + new Date().toLocaleString('ms-MY'), 14, 22);
+                    
+                    doc.autoTable({
+                        startY: 28,
+                        head: [['Jawatan', 'Nama Calon', 'Jumlah Undi', 'Kedudukan']],
+                        body: data,
+                        theme: 'grid',
+                        headStyles: { fillColor: [59, 130, 246] } // Blue color
+                    });
+                    doc.save("Laporan_Keputusan_Undian_BIPD.pdf");
+                }
+            }
+        }
+
+        // PENGIRAAN MAIN DASHBOARD
+        function getTotalEligible() { return state.eligibleRows.length; }
 
         function getTotalAttended() {
             let count = 0;
             state.eligibleRows.forEach(row => {
                 if (!row.c) return;
-                // Kita semak lajur index 6 ke atas kerana lajur awal adalah Emel, Undian, Kod dsb.
                 for (let i = 6; i < row.c.length; i++) {
                     const val = getCellValue(row, i);
                     if (val && String(val).trim().toLowerCase() === 'hadir') {
-                        count++;
-                        break; 
+                        count++; break; 
                     }
                 }
             });
@@ -620,9 +791,7 @@
             }).length;
         }
 
-        function isRoleClosed(role) {
-            return getPhaseIndex() >= role.unlockIndex;
-        }
+        function isRoleClosed(role) { return getPhaseIndex() >= role.unlockIndex; }
 
         function renderShell() {
             roleGrid.innerHTML = roles.map(role => `
@@ -725,18 +894,8 @@
                     subtext: 'Sudah Mengundi',
                     left: 'center',
                     top: 'center',
-                    textStyle: {
-                        color: role.color,
-                        fontFamily: 'Inter, sans-serif',
-                        fontSize: 30,
-                        fontWeight: 900
-                    },
-                    subtextStyle: {
-                        color: '#9ca3af',
-                        fontFamily: 'Inter, sans-serif',
-                        fontSize: 11,
-                        fontWeight: 700
-                    },
+                    textStyle: { color: role.color, fontFamily: 'Inter, sans-serif', fontSize: 30, fontWeight: 900 },
+                    subtextStyle: { color: '#9ca3af', fontFamily: 'Inter, sans-serif', fontSize: 11, fontWeight: 700 },
                     itemGap: 2
                 },
                 tooltip: {
@@ -916,12 +1075,12 @@
                 .replace(/'/g, '&#039;');
         }
 
+        /* ------------------------------------------------------------------------- 
+           STREAMING_CHUNK:Penyegaran dan Konfigurasi Data (Polling)
+           ------------------------------------------------------------------------- */
+        
         function updateSystemPhase(response) {
-            if (!response || !response.table) {
-                console.error('Settings sheet error: No response data');
-                phaseLabel.textContent = 'Ralat: Tidak dapat baca Settings sheet';
-                return;
-            }
+            if (!response || !response.table) return;
             const rows = response.table.rows || [];
             const phaseRow = rows.find(row => getCellValue(row, 0) === 'Fasa Sistem');
             state.phase = phaseRow ? getCellValue(phaseRow, 1) || 'nomination' : 'nomination';
@@ -930,6 +1089,7 @@
 
         function updateEligibleData(response) {
             if (!response || !response.table) return;
+            state.eligibleCols = response.table.cols || []; // Merekod kolum untuk memuat turun Laporan
             const rows = response.table.rows || [];
             state.eligibleRows = rows.filter(row => isFilledCell(row.c && row.c[0]));
             checkAndRender();
@@ -951,15 +1111,15 @@
 
         function checkAndRender() {
             const isClosed = state.phase === 'closed' || state.phase === 'published';
-            const liveCounting = document.querySelector('.live-count-view');
+            const liveCounting = document.querySelectorAll('.live-count-view');
             const resultsView = document.getElementById('resultsView');
 
             if (isClosed) {
-                liveCounting.classList.add('hidden');
+                liveCounting.forEach(el => el.classList.add('hidden'));
                 resultsView.classList.add('show');
                 renderResults();
             } else {
-                liveCounting.classList.remove('hidden');
+                liveCounting.forEach(el => el.classList.remove('hidden'));
                 resultsView.classList.remove('show');
                 renderDashboard();
             }
